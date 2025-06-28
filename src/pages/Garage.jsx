@@ -182,7 +182,7 @@ const Garage = () => {
           title={ragMode ? 'Wipe Mode: ON' : 'Wipe Mode'}
           style={{ fontSize: '0.9rem' }}
         >
-          <img src={ragIcon} alt="Rag icon for wipe mode" className="w-5 h-5" />
+          <img src="/assets/rag.svg" alt="Rag icon for wipe mode" className="w-5 h-5" />
           {ragMode ? 'Wipe Mode: ON' : 'Wipe Mode'}
         </button>
         <button
@@ -191,7 +191,7 @@ const Garage = () => {
           onClick={handleFoamIt}
           title="Add Foam"
         >
-          <img src={foamIcon} alt="Foam icon for add foam" className="w-5 h-5" />
+          <img src="/assets/foam.svg" alt="Foam icon for add foam" className="w-5 h-5" />
         </button>
         <button
           className="button button-tertiary flex items-center justify-center p-1 text-sm"
@@ -199,7 +199,7 @@ const Garage = () => {
           onClick={handleWipeFoam}
           title="Wipe All Foam"
         >
-          <img src={wipeIcon} alt="Wipe icon for wipe foam" className="w-5 h-5" />
+          <img src="/assets/wipe.svg" alt="Wipe icon for wipe foam" className="w-5 h-5" />
         </button>
       </div>
       <div className="p-1 mt-6 bg-[rgba(26,26,26,0.85)] text-[var(--color-white)] px-4 py-3 md:px-6 md:py-4 rounded-lg shadow-lg font-heading text-xl tracking-widest border border-[var(--color-border)] w-fit max-w-full mx-auto">
