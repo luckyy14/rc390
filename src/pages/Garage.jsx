@@ -1,121 +1,96 @@
-import React, { useRef, useState, useEffect } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { Rc390 } from "../modules/rc390";
 import * as THREE from "three";
 
 /**
- * FoamOverlay3D - 3D foam mesh overlay that wipes off on hover.
- * Uses the same geometry as the bike, slightly inflated.
+ * FoamOverlay3D - Covers all meshes, allows shift+hover to wipe foam.
  */
-function FoamOverlay3D({ modelUrl = "/assets/ktm.glb" }) {
-  const { scene } = useGLTF(modelUrl);
-  const [hiddenVertices, setHiddenVertices] = useState(new Set());
-  const meshRefs = useRef([]);
+function FoamOverlay3D({ modelUrl = "/assets/ktm.glb", scale = 1, position = [0, 0, 0], resetKey }) {
+  const { scene: originalScene } = useGLTF(modelUrl);
+  const [scene] = useState(() => originalScene.clone(true));
+  const [hidden, setHidden] = useState({}); // {uuid: true}
 
-  // Inflate geometry slightly for foam overlay
+  // Reset hidden state when resetKey changes
   useEffect(() => {
-    scene.traverse((child) => {
-      if (child.isMesh) {
-        child.material = new THREE.MeshStandardMaterial({
-          color: "#fff",
-          transparent: true,
-          opacity: 0.7,
-          roughness: 0.9,
-        });
-        // Inflate geometry
-        child.geometry = child.geometry.clone();
-        child.geometry.computeVertexNormals();
-        const pos = child.geometry.attributes.position;
-        const norm = child.geometry.attributes.normal;
-        for (let i = 0; i < pos.count; i++) {
-          pos.setX(i, pos.getX(i) + norm.getX(i) * 0.01);
-          pos.setY(i, pos.getY(i) + norm.getY(i) * 0.01);
-          pos.setZ(i, pos.getZ(i) + norm.getZ(i) * 0.01);
-        }
-        pos.needsUpdate = true;
+    setHidden({});
+  }, [resetKey]);
+
+  // Handler to hide mesh on shift+hover
+  const handlePointerMove = useCallback(
+    (e, uuid) => {
+      if (e.shiftKey) {
+        setHidden((prev) => ({ ...prev, [uuid]: true }));
       }
-    });
-  }, [scene]);
+    },
+    []
+  );
 
-  // On pointer move, hide foam at hit face
-  const handlePointerMove = (e) => {
-    e.stopPropagation();
-    if (!e.face || !e.object) return;
-    const idx = e.face.a; // Use one vertex per face for simplicity
-    setHiddenVertices((prev) => {
-      const next = new Set(prev);
-      next.add(idx);
-      return next;
-    });
-    // Update vertex alpha (simulate wipe)
-    const mesh = e.object;
-    if (!mesh.geometry.attributes.color) {
-      const count = mesh.geometry.attributes.position.count;
-      const colors = new Float32Array(count * 4);
-      colors.fill(1); // RGBA all white
-      mesh.geometry.setAttribute("color", new THREE.BufferAttribute(colors, 4));
-    }
-    const colorAttr = mesh.geometry.attributes.color;
-    colorAttr.setW(idx * 4 + 3, 0); // Set alpha to 0
-    colorAttr.needsUpdate = true;
-    mesh.material.vertexColors = true;
-    mesh.material.needsUpdate = true;
-  };
+  // Overlay all meshes in the scene
+  const overlayMat = new THREE.MeshBasicMaterial({
+    color: "#fff",
+    transparent: true,
+    opacity: 0.7,
+    depthWrite: false,
+  });
 
-  // Render all meshes in scene as foam overlays
   const overlays = [];
   scene.traverse((child) => {
-    if (child.isMesh) {
-      // Ensure vertex colors (RGBA) are initialized
-      const geom = child.geometry;
-      if (!geom.attributes.color || geom.attributes.color.itemSize !== 4) {
-        const count = geom.attributes.position.count;
-        const colors = new Float32Array(count * 4);
-        for (let i = 0; i < count; i++) {
-          colors[i * 4 + 0] = 1; // R
-          colors[i * 4 + 1] = 1; // G
-          colors[i * 4 + 2] = 1; // B
-          colors[i * 4 + 3] = 0.7; // A (match foam opacity)
-        }
-        geom.setAttribute("color", new THREE.BufferAttribute(colors, 4));
-      }
+    if (child.isMesh && !hidden[child.uuid]) {
       overlays.push(
         <mesh
           key={child.uuid}
-          geometry={geom}
+          geometry={child.geometry.clone()}
           position={child.position}
           rotation={child.rotation}
           scale={child.scale}
-          material={new THREE.MeshStandardMaterial({
-            color: "#fff",
-            transparent: true,
-            opacity: 1,
-            roughness: 0.9,
-            vertexColors: true,
-          })}
-          onPointerMove={handlePointerMove}
+          material={overlayMat}
+          onPointerMove={(e) => handlePointerMove(e, child.uuid)}
           pointerEvents="all"
         />
       );
     }
   });
 
-  return <group>{overlays}</group>;
+  return <group position={position} scale={scale}>{overlays}</group>;
 }
 
 const Garage = () => {
+  const [showFoam, setShowFoam] = useState(false);
+  const [foamReset, setFoamReset] = useState(0);
+
+  const handleFoamIt = () => {
+    setShowFoam(true);
+    setFoamReset(r => r + 1);
+  };
+
   return (
     <div className="w-full h-[80vh] bg-[var(--color-bg)] relative">
       <Canvas camera={{ position: [2, 2, 5], fov: 50 }}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[2, 5, 2]} intensity={1.2} />
-        <Rc390 scale={2} />
-        {/* <FoamOverlay3D /> */}
+        <Rc390 scale={2} position={[0, -0.6, 0]} />
+        {showFoam && <FoamOverlay3D scale={2} position={[0, -0.6, 0]} resetKey={foamReset} />}
         <OrbitControls enablePan enableZoom enableRotate />
       </Canvas>
       <div className="absolute top-8 left-8 bg-[rgba(26,26,26,0.85)] text-[var(--color-white)] px-6 py-3 rounded-lg shadow-lg font-heading text-xl tracking-widest border border-[var(--color-border)]">
-        3D Bike Overview — Wipe the foam!
+        3D Bike Overview — Foam & Wipe!<br />
+        <span className="text-[var(--color-accent)] text-base">Tip: Hold Shift and hover to wipe foam interactively.</span>
+      </div>
+      <div className="absolute top-8 right-8 flex gap-4">
+        <button
+          className="bg-[var(--color-accent)] text-[var(--color-white)] px-6 py-2 rounded-lg font-heading text-lg shadow hover:bg-[var(--color-accent-hover)] transition"
+          onClick={handleFoamIt}
+        >
+          Foam It!
+        </button>
+        <button
+          className="bg-[var(--color-border)] text-[var(--color-white)] px-6 py-2 rounded-lg font-heading text-lg shadow hover:bg-[var(--color-muted)] transition"
+          onClick={() => setShowFoam(false)}
+        >
+          Wipe Foam
+        </button>
       </div>
     </div>
   );
