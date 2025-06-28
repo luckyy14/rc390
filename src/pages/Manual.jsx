@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { GlobalWorkerOptions, getDocument } from "pdfjs-dist";
 import "pdfjs-dist/web/pdf_viewer.css";
 
@@ -92,6 +93,13 @@ const Manual = () => {
 
   return (
     <div className="flex flex-col w-full min-h-[min(100dvh,600px)] h-auto bg-[var(--color-bg)] relative p-4 md:p-8">
+      <Helmet>
+        <title>KTM RC 390 Manual | DarkRide</title>
+        <meta name="description" content="Read the official KTM RC 390 manual online. Browse, search, and view every page of the superbike's manual." />
+        <meta name="keywords" content="KTM RC 390, manual, PDF, motorcycle, superbike, DarkRide" />
+        <meta property="og:title" content="KTM RC 390 Manual | DarkRide" />
+        <meta property="og:description" content="Read the official KTM RC 390 manual online. Browse, search, and view every page of the superbike's manual." />
+      </Helmet>
       <h1 className="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-6 mt-2 tracking-widest uppercase font-heading">Manual</h1>
       <div className="flex flex-row flex-wrap mweb-flex-col w-full h-auto">
         <div className="max-w-3xl mx-auto p-6 bg-[rgba(26,26,26,0.95)] rounded shadow-lg mt-8 text-[var(--color-white)] select-none w-full">

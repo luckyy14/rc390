@@ -1,8 +1,28 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import AudioVisualizer from "../ui/AudioVisualizer";
 
 const Exhaust = () => (
   <div className="flex flex-col w-full min-h-[min(100dvh,600px)] h-auto bg-[var(--color-bg)] relative p-4 md:p-8">
+    <Helmet>
+      <title>KTM RC 390 Exhaust | DarkRide</title>
+      <meta
+        name="description"
+        content="Experience the sound of the KTM RC 390 exhaust. Listen to audio samples and visualize the engine's roar."
+      />
+      <meta
+        name="keywords"
+        content="KTM RC 390, exhaust, sound, audio, motorcycle, superbike, DarkRide"
+      />
+      <meta
+        property="og:title"
+        content="KTM RC 390 Exhaust | DarkRide"
+      />
+      <meta
+        property="og:description"
+        content="Experience the sound of the KTM RC 390 exhaust. Listen to audio samples and visualize the engine's roar."
+      />
+    </Helmet>
     <h1 className="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-6 mt-2 tracking-widest uppercase font-heading">
       Exhaust
     </h1>
