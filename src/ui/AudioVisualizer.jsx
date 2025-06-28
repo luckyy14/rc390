@@ -134,6 +134,7 @@ export default function AudioVisualizer({
       />
       <button
         onClick={handlePlayPause}
+        className="button button-tertiary"
         style={{
           position: "absolute",
           left: size / 2 - hexSize,

@@ -1,0 +1,52 @@
+/* Bike-themed button styles using theme variables */
+.button {
+  font-family: var(--font-family-heading);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 2px solid var(--color-border);
+  font-size: var(--font-body);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px 0 #00000033;
+  margin: var(--spacing-xs);
+}
+
+.button-primary {
+  background: var(--color-accent);
+  color: var(--color-white);
+  border-color: var(--color-accent);
+}
+.button-primary:hover {
+  background: var(--color-accent-hover);
+  color: var(--color-white);
+  box-shadow: 0 4px 16px 0 #ff6f0033;
+}
+
+.button-secondary {
+  background: var(--color-surface);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.button-secondary:hover {
+  background: var(--color-muted);
+  color: var(--color-white);
+}
+
+.button-tertiary {
+  background: transparent;
+  color: var(--color-accent);
+  border-style: dashed;
+  border-color: var(--color-muted);
+}
+.button-tertiary:hover {
+  background: var(--color-surface);
+  color: var(--color-accent-hover);
+}
+
+/* Optional: Add a tire tread effect on focus for fun */
+.button:focus {
+  outline: 2px solid var(--color-accent);
+  box-shadow: 0 0 0 4px #ff6f0022;
+}

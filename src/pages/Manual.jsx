@@ -97,9 +97,9 @@ const Manual = () => {
         <canvas ref={canvasRef} style={{ maxWidth: "100%", borderRadius: 8, boxShadow: "0 2px 8px #0008" }} />
         {loading && <div className="mt-4 text-[var(--color-accent)]">Loading...</div>}
         <div className="flex gap-4 mt-4">
-          <button onClick={handlePrev} disabled={pageNumber === 1} className="px-3 py-1 bg-[var(--color-accent)] text-white rounded disabled:opacity-50">Prev</button>
+          <button onClick={handlePrev} disabled={pageNumber === 1} className="button button-primary" style={{ minWidth: 64 }}>Prev</button>
           <span>Page {pageNumber} of {numPages}</span>
-          <button onClick={handleNext} disabled={pageNumber === numPages} className="px-3 py-1 bg-[var(--color-accent)] text-white rounded disabled:opacity-50">Next</button>
+          <button onClick={handleNext} disabled={pageNumber === numPages} className="button button-primary" style={{ minWidth: 64 }}>Next</button>
           <form onSubmit={handleInputGo} className="flex items-center gap-1">
             <input
               type="text"
@@ -110,7 +110,7 @@ const Manual = () => {
               inputMode="numeric"
               pattern="[0-9]*"
             />
-            <button type="submit" className="px-2 py-1 bg-[var(--color-accent)] text-white rounded">Go</button>
+            <button type="submit" className="button button-secondary" style={{ minWidth: 48 }}>Go</button>
           </form>
         </div>
       </div>

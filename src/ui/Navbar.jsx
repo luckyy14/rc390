@@ -62,7 +62,7 @@ export const Navbar = () => {
 
   return (
     <nav
-      className="sticky top-0 z-50 flex items-center justify-between px-6 py-3 backdrop-blur-lg bg-[rgba(26,26,26,0.85)] border-b border-[var(--color-border)] shadow-lg"
+      className="sticky top-0 z-50 flex items-center justify-between px-10 py-5 navbar backdrop-blur-lg bg-[rgba(26,26,26,0.85)] border-b border-[var(--color-border)] shadow-lg"
       style={{
         fontFamily: "Oswald, Rajdhani, Inter, sans-serif",
         letterSpacing: "1px",
@@ -88,7 +88,7 @@ export const Navbar = () => {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `relative font-semibold px-2 py-1 flex items-center gap-2 text-[var(--color-white)] transition
+              `relative font-semibold px-4 py-2 nav-link flex items-center gap-2 text-[var(--color-white)] transition
               hover:text-[var(--color-accent)]
               ${isActive ? "text-[var(--color-accent)]" : ""}
               group`

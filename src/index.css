@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Rajdhani:wght@400;700&family=Inter:wght@400;700&display=swap');
 @import "../src/theme/colors.css";
+@import "../src/theme/button.css";
+@import "../src/theme/bike-theme.css";
 
 @tailwind base;
 @tailwind components;

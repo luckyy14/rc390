@@ -171,7 +171,7 @@ const Garage = () => {
   }, []);
 
   return (
-    <div className="flex flex-row flex-wrap mweb-flex-col w-full h-[80vh] bg-[var(--color-bg)] relative p-4 md:p-8">
+    <div className="flex flex-row flex-wrap mweb-flex-col w-full min-h-[min(100dvh,600px)] h-auto bg-[var(--color-bg)] relative p-2 md:p-8">
       <Canvas camera={{ position: [2, 2, 5], fov: 50 }}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[2, 5, 2]} intensity={1.2} />
@@ -205,15 +205,15 @@ const Garage = () => {
           /> {wipeRadius.toFixed(2)}
         </span>
       </div>
-      <div className="absolute top-8 right-8 flex gap-4">
+      <div className=" top-8 right-8 flex gap-4">
         <button
-          className="bg-[var(--color-accent)] text-[var(--color-white)] px-6 py-2 rounded-lg font-heading text-lg shadow hover:bg-[var(--color-accent-hover)] transition"
+          className="button button-primary"
           onClick={handleFoamIt}
         >
           Foam It!
         </button>
         <button
-          className="bg-[var(--color-border)] text-[var(--color-white)] px-6 py-2 rounded-lg font-heading text-lg shadow hover:bg-[var(--color-muted)] transition"
+          className="button button-secondary"
           onClick={handleWipeFoam}
         >
           Wipe Foam
