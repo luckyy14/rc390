@@ -4,6 +4,7 @@ import Shop from "./pages/Shop";
 import Showroom from "./pages/Showroom";
 import Exhaust from "./pages/Exhaust";
 import Garage from "./pages/Garage";
+import Manual from "./pages/Manual";
 import { Navbar } from "./ui/Navbar";
 import TireSkidTrail from "./ui/TireSkidTrail";
 
@@ -18,6 +19,7 @@ const App = () => (
         <Route path="/showroom" element={<Showroom />} />
         <Route path="/exhaust" element={<Exhaust />} />
         <Route path="/garage" element={<Garage />} />
+        <Route path="/manual" element={<Manual />} />
       </Routes>
     </Router>
   </>

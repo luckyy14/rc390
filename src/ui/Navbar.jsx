@@ -30,6 +30,13 @@ const icons = {
       <rect x="7" y="11" width="6" height="4" rx="1" fill="#1A1A1A"/>
     </svg>
   ),
+  Manual: (
+    <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+      <rect x="3" y="4" width="14" height="12" rx="2" fill="#FF6F00"/>
+      <rect x="6" y="7" width="8" height="2" rx="1" fill="#1A1A1A"/>
+      <rect x="6" y="11" width="5" height="2" rx="1" fill="#1A1A1A"/>
+    </svg>
+  ),
 };
 
 const navItems = [
@@ -37,6 +44,7 @@ const navItems = [
   { to: "/showroom", label: "Showroom" },
   { to: "/exhaust", label: "Exhaust" },
   { to: "/garage", label: "Garage" },
+  { to: "/manual", label: "Manual" },
 ];
 
 export const Navbar = () => {
