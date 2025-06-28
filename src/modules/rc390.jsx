@@ -70,21 +70,12 @@ export function Rc390Viewer({
   const [zoom, setZoom] = useState(1);
 
   return (
-    <div className="w-full h-[80vh] bg-[var(--color-bg)] relative">
+    <div className="w-full h-[80vh] bg-[var(--color-bg)] relative p-4 md:p-8">
       <div
+        className="absolute top-6 left-6 z-10 bg-[rgba(26,26,26,0.85)] p-4 md:p-6 rounded-lg shadow-lg border border-[var(--color-border)] min-w-[260px]"
         style={{
-          position: "absolute",
-          top: 24,
-          left: 24,
-          zIndex: 10,
-          background: "rgba(26,26,26,0.85)",
-          padding: "20px 28px",
-          borderRadius: "16px",
-          boxShadow: "0 6px 24px rgba(0,0,0,0.25)",
-          border: "1.5px solid #333",
           fontFamily: "Oswald, Rajdhani, Inter, sans-serif",
           color: "#E0E0E0",
-          minWidth: 260,
           backdropFilter: "blur(20px)",
         }}
       >

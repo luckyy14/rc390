@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
+import { gsap } from "gsap";
 
 // SVG icons for each tab
 const icons = {
@@ -38,52 +39,66 @@ const navItems = [
   { to: "/garage", label: "Garage" },
 ];
 
-export const Navbar = () => (
-  <nav
-    className="sticky top-0 z-50 flex items-center justify-between px-8 py-4 backdrop-blur-lg bg-[rgba(26,26,26,0.85)] border-b border-[var(--color-border)] shadow-lg"
-    style={{
-      fontFamily: "Oswald, Rajdhani, Inter, sans-serif",
-      letterSpacing: "1px",
-    }}
-  >
-    <div className="flex items-center gap-3">
-      {/* Bouncing tyre SVG logo */}
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <circle cx="18" cy="18" r="14" fill="#1A1A1A" stroke="#FF6F00" strokeWidth="4"/>
-        <circle cx="18" cy="18" r="7" fill="#FF6F00"/>
-        <ellipse cx="18" cy="28" rx="7" ry="2" fill="#333" opacity="0.4"/>
-      </svg>
-      <span
-        className="text-[var(--color-white)] text-2xl font-bold tracking-widest"
-        style={{ fontFamily: "Oswald, Rajdhani, Inter, sans-serif" }}
-      >
-        DARKRIDE
-      </span>
-    </div>
-    <div className="flex gap-12">
-      {navItems.map((item) => (
-        <NavLink
-          key={item.to}
-          to={item.to}
-          className={({ isActive }) =>
-            `relative font-semibold px-2 py-1 flex items-center gap-2 text-[var(--color-white)] transition
-            hover:text-[var(--color-accent)]
-            ${isActive ? "text-[var(--color-accent)]" : ""}
-            group`
-          }
+export const Navbar = () => {
+  const logoRef = useRef(null);
+  useEffect(() => {
+    if (logoRef.current) {
+      gsap.to(logoRef.current, {
+        rotate: 360,
+        duration: 20,
+        repeat: -1,
+        ease: "linear",
+      });
+    }
+  }, []);
+
+  return (
+    <nav
+      className="sticky top-0 z-50 flex items-center justify-between px-6 py-3 backdrop-blur-lg bg-[rgba(26,26,26,0.85)] border-b border-[var(--color-border)] shadow-lg"
+      style={{
+        fontFamily: "Oswald, Rajdhani, Inter, sans-serif",
+        letterSpacing: "1px",
+      }}
+    >
+      <div className="flex items-center gap-3">
+        {/* Bouncing tyre SVG logo */}
+        <svg ref={logoRef} width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="14" fill="#1A1A1A" stroke="#FF6F00" strokeWidth="4"/>
+          <circle cx="18" cy="18" r="7" fill="#FF6F00"/>
+          <ellipse cx="18" cy="28" rx="7" ry="2" fill="#333" opacity="0.4"/>
+        </svg>
+        <span
+          className="text-[var(--color-white)] text-2xl font-bold tracking-widest"
+          style={{ fontFamily: "Oswald, Rajdhani, Inter, sans-serif" }}
         >
-          <span className="flex items-center gap-2">
-            {icons[item.label]}
-            <span className="relative">
-              {item.label}
-              <span
-                className="absolute left-0 -bottom-1 w-full h-0.5 rounded bg-[var(--color-accent)] scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"
-                aria-hidden="true"
-              ></span>
+          DARKRIDE
+        </span>
+      </div>
+      <div className="flex gap-12">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) =>
+              `relative font-semibold px-2 py-1 flex items-center gap-2 text-[var(--color-white)] transition
+              hover:text-[var(--color-accent)]
+              ${isActive ? "text-[var(--color-accent)]" : ""}
+              group`
+            }
+          >
+            <span className="flex items-center gap-2">
+              {icons[item.label]}
+              <span className="relative">
+                {item.label}
+                <span
+                  className="absolute left-0 -bottom-1 w-full h-0.5 rounded bg-[var(--color-accent)] scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"
+                  aria-hidden="true"
+                ></span>
+              </span>
             </span>
-          </span>
-        </NavLink>
-      ))}
-    </div>
-  </nav>
-);
+          </NavLink>
+        ))}
+      </div>
+    </nav>
+  );
+};

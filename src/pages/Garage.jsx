@@ -171,7 +171,7 @@ const Garage = () => {
   }, []);
 
   return (
-    <div className="flex flex-row flex-wrap mweb-flex-col w-full h-[80vh] bg-[var(--color-bg)] relative">
+    <div className="flex flex-row flex-wrap mweb-flex-col w-full h-[80vh] bg-[var(--color-bg)] relative p-4 md:p-8">
       <Canvas camera={{ position: [2, 2, 5], fov: 50 }}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[2, 5, 2]} intensity={1.2} />
@@ -189,7 +189,7 @@ const Garage = () => {
         <OrbitControls enablePan enableZoom enableRotate />
       </Canvas>
       <WaterSprayCursor show={shiftHeld && foamLayers.length > 0} radius={wipeRadius * 120} />
-      <div className="absolute top-8 left-8 bg-[rgba(26,26,26,0.85)] text-[var(--color-white)] px-6 py-3 rounded-lg shadow-lg font-heading text-xl tracking-widest border border-[var(--color-border)]">
+      <div className="absolute top-8 left-8 bg-[rgba(26,26,26,0.85)] text-[var(--color-white)] px-4 py-3 md:px-6 md:py-4 rounded-lg shadow-lg font-heading text-xl tracking-widest border border-[var(--color-border)]">
         3D Bike Overview — Foam & Wipe!<br />
         <span className="text-[var(--color-accent)] text-base">
           Tip: Hold Shift and hover to wipe foam interactively.<br />
