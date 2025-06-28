@@ -22,7 +22,7 @@ const Shop = () => {
       </h1>
       <div className="flex flex-row flex-wrap mweb-flex-col w-full h-auto">
         <div className="p-4 md:p-8">Shop Page</div>
-        {isIOSDevice && (
+        {isIOSDevice ? (
           <a
             href="/assets/ktm.usdz"
             rel="ar"
@@ -30,7 +30,7 @@ const Shop = () => {
           >
             View in AR (iOS)
           </a>
-        )}
+        ) : (
           <model-viewer
             src="/assets/ktm.glb"
             ar
@@ -41,7 +41,7 @@ const Shop = () => {
             ios-src="/assets/ktm.usdz"
           >
           </model-viewer>
-      
+        )}
       </div>
     </div>
   );
