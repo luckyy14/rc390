@@ -1,17 +1,33 @@
 :root {
-  --color-bg: #ffffff;
-  --color-text: #18181b;
-  --color-primary: #2563eb;
-  --color-secondary: #64748b;
-  --color-accent: #f59e42;
-}
+  /* Color Palette */
+  --color-primary: #1A1A1A;
+  --color-surface: #121212;
+  --color-accent: #FF6F00;
+  --color-accent-hover: #FF8C1A;
+  --color-white: #FFFFFF;
+  --color-border: #333333;
+  --color-muted: #555555;
+  --color-text-main: #E0E0E0;
+  --color-text-subtle: #BBBBBB;
 
-[data-theme="dark"] {
-  --color-bg: #18181b;
-  --color-text: #f4f4f5;
-  --color-primary: #60a5fa;
-  --color-secondary: #94a3b8;
-  --color-accent: #fbbf24;
-}
+  /* Typography */
+  --font-hero: 72px;
+  --font-h1: 48px;
+  --font-h2: 36px;
+  --font-h3: 24px;
+  --font-body: 16px;
+  --font-small: 14px;
+  --font-family-heading: 'Oswald', 'Rajdhani', 'Inter', sans-serif;
+  --font-family-body: 'Inter', 'Rajdhani', sans-serif;
 
-/* Add more themes for whitelabelling as needed */
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 48px;
+
+  /* Radius */
+  --radius-lg: 16px;
+  --radius-sm: 6px;
+}
