@@ -3,10 +3,10 @@ import React, { useRef, useEffect, useState } from "react";
 // AudioVisualizer: Circular waveform visualizer with play/pause button in the center
 export default function AudioVisualizer({
   src = "/assets/audio/mixkit-motorcycle-engine-doing-gearshift-2725.wav",
-  size = 320,
-  barCount = 64,
+  size = 400, // Increased canvas size
+  barCount = 128,
   color = "#fff",
-  accent = "#FFB300",
+  accent = "var(--color-accent)",
   ...props
 }) {
   const canvasRef = useRef(null);
@@ -53,29 +53,34 @@ export default function AudioVisualizer({
     // eslint-disable-next-line
   }, [isPlaying, audioKey]);
 
+  // Add a frame counter to slow down waveform updates
+  const frameRef = useRef(0);
   useEffect(() => {
     if (!analyser || !canvasRef.current || !dataArray) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     let animationId;
+    // Get accent color from CSS variable
+    const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--color-accent') || '#FF6F00';
+    ctx.clearRect(0, 0, size, size);
+    let lastDataArray = new Uint8Array(dataArray.length);
     const draw = () => {
-      analyser.getByteTimeDomainData(dataArray);
+      frameRef.current = (frameRef.current + 1) % 4; // Only update every 4th frame
+      if (frameRef.current === 0) {
+        analyser.getByteTimeDomainData(dataArray);
+        lastDataArray.set(dataArray);
+      }
       ctx.clearRect(0, 0, size, size);
-      // Draw outer circle
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(size / 2, size / 2, size / 2 - 8, 0, 2 * Math.PI);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
-      ctx.shadowBlur = 0;
-      ctx.stroke();
-      ctx.restore();
-      // Draw waveform bars
-      const radius = size / 2 - 18;
-      for (let i = 0; i < barCount; i++) {
-        const angle = (i / barCount) * 2 * Math.PI;
-        const v = dataArray[i] / 128.0;
-        const barLength = 18 + (v - 1) * 32;
+      const minBarLength = 0.5; // Minimal for initial state
+      const maxBarLength = 20;
+      const expansionMultiplier = 3;
+      const radius = size / 2 - (maxBarLength * expansionMultiplier) - 16; // 16px padding from edge
+      // Reduce barCount for more gap between bars
+      const effectiveBarCount = Math.floor(barCount * 0.7); // e.g. 90 bars if barCount=128
+      for (let i = 0; i < effectiveBarCount; i++) {
+        const angle = (i / effectiveBarCount) * 2 * Math.PI - Math.PI / 2;
+        const v = lastDataArray[i % lastDataArray.length] / 255.0;
+        const barLength = v < 0.05 ? minBarLength : minBarLength + v * maxBarLength * expansionMultiplier;
         const x1 = size / 2 + Math.cos(angle) * radius;
         const y1 = size / 2 + Math.sin(angle) * radius;
         const x2 = size / 2 + Math.cos(angle) * (radius + barLength);
@@ -83,25 +88,18 @@ export default function AudioVisualizer({
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
-        ctx.strokeStyle = accent;
+        ctx.strokeStyle = accentColor;
         ctx.lineWidth = 2;
+        ctx.shadowBlur = 1; // Much less blur
+        ctx.shadowColor = accentColor;
         ctx.stroke();
       }
-      // Draw inner circle
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(size / 2, size / 2, size / 2 - 38, 0, 2 * Math.PI);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
-      ctx.globalAlpha = 0.5;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-      ctx.restore();
+      ctx.shadowBlur = 0;
       animationId = requestAnimationFrame(draw);
     };
     draw();
     return () => cancelAnimationFrame(animationId);
-  }, [analyser, dataArray, color, accent, size, barCount]);
+  }, [analyser, dataArray, size, barCount]);
 
   // Play/pause logic
   const handlePlayPause = () => {
@@ -115,7 +113,7 @@ export default function AudioVisualizer({
   };
 
   // Center hexagon button
-  const hexSize = 48;
+  const hexSize = 60; // scale up hexagon for larger canvas
   const hexPoints = Array.from({ length: 6 }, (_, i) => {
     const angle = (Math.PI / 3) * i - Math.PI / 6;
     return [
@@ -124,6 +122,7 @@ export default function AudioVisualizer({
     ];
   });
   const hexPath = hexPoints.map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `L${p[0]},${p[1]}`)).join(" ") + " Z";
+  const accentColor = typeof window !== 'undefined' ? (getComputedStyle(document.documentElement).getPropertyValue('--color-accent') || '#FF6F00') : '#FF6F00';
 
   return (
     <div style={{ position: "relative", width: size, height: size }} {...props}>
@@ -131,7 +130,7 @@ export default function AudioVisualizer({
         ref={canvasRef}
         width={size}
         height={size}
-        style={{ display: "block", width: size, height: size }}
+        style={{ display: "block", width: size, height: size, background: "transparent" }}
       />
       <button
         onClick={handlePlayPause}
@@ -145,18 +144,20 @@ export default function AudioVisualizer({
           border: "none",
           cursor: "pointer",
           outline: "none",
+          zIndex: 2,
         }}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
-        <svg width={hexSize * 2} height={hexSize * 2} viewBox={`0 0 ${hexSize * 2} ${hexSize * 2}`}>
-          <path d={hexPath} fill={accent} stroke="#fff" strokeWidth="3" />
+        <svg width={hexSize * 2} height={hexSize * 2} viewBox={`0 0 ${hexSize * 2} ${hexSize * 2}`}
+          style={{ display: "block" }}>
+          <path d={hexPath} fill={accentColor} stroke="#fff" strokeWidth="3" />
           {isPlaying ? (
             <g>
-              <rect x={hexSize - 10} y={hexSize - 16} width="8" height="32" rx="2" fill="#222" />
-              <rect x={hexSize + 2} y={hexSize - 16} width="8" height="32" rx="2" fill="#222" />
+              <rect x={hexSize - 12} y={hexSize - 20} width="10" height="40" rx="2" fill={accentColor} />
+              <rect x={hexSize + 2} y={hexSize - 20} width="10" height="40" rx="2" fill={accentColor} />
             </g>
           ) : (
-            <polygon points={`${hexSize - 8},${hexSize - 16} ${hexSize + 16},${hexSize} ${hexSize - 8},${hexSize + 16}`} fill="#222" />
+            <polygon points={`${hexSize - 8},${hexSize - 18} ${hexSize + 18},${hexSize} ${hexSize - 8},${hexSize + 18}`} fill={accentColor} />
           )}
         </svg>
       </button>
