@@ -7,22 +7,28 @@ import Garage from "./pages/Garage";
 import Manual from "./pages/Manual";
 import { Navbar } from "./ui/Navbar";
 import TireSkidTrail from "./ui/TireSkidTrail";
+import HamburgerMenu from "./ui/HamburgerMenu";
+import usePhone from "./hooks/usephone";
 
-const App = () => (
-  <>
-    <TireSkidTrail />
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Navigate to="/shop" replace />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/showroom" element={<Showroom />} />
-        <Route path="/exhaust" element={<Exhaust />} />
-        <Route path="/garage" element={<Garage />} />
-        <Route path="/manual" element={<Manual />} />
-      </Routes>
-    </Router>
-  </>
-);
+const App = () => {
+  const { isPhone } = usePhone();
+  return (
+    <>
+      <TireSkidTrail />
+      <Router>
+        {isPhone && <HamburgerMenu />}
+        {!isPhone && <Navbar />}
+        <Routes>
+          <Route path="/" element={<Navigate to="/showroom" replace />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/showroom" element={<Showroom />} />
+          <Route path="/exhaust" element={<Exhaust />} />
+          <Route path="/garage" element={<Garage />} />
+          <Route path="/manual" element={<Manual />} />
+        </Routes>
+      </Router>
+    </>
+  );
+};
 
 export default App;

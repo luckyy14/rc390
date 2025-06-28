@@ -91,32 +91,36 @@ const Manual = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-[rgba(26,26,26,0.95)] rounded shadow-lg mt-8 text-[var(--color-white)] select-none">
-      <h1 className="text-3xl font-bold mb-4 text-[var(--color-accent)]">KTM RC390 Manual</h1>
-      <div className="flex flex-col items-center">
-        <canvas ref={canvasRef} style={{ maxWidth: "100%", borderRadius: 8, boxShadow: "0 2px 8px #0008" }} />
-        {loading && <div className="mt-4 text-[var(--color-accent)]">Loading...</div>}
-        <div className="flex gap-4 mt-4">
-          <button onClick={handlePrev} disabled={pageNumber === 1} className="button button-primary" style={{ minWidth: 64 }}>Prev</button>
-          <span>Page {pageNumber} of {numPages}</span>
-          <button onClick={handleNext} disabled={pageNumber === numPages} className="button button-primary" style={{ minWidth: 64 }}>Next</button>
-          <form onSubmit={handleInputGo} className="flex items-center gap-1">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={handleInputChange}
-              placeholder="Go to page"
-              className="w-16 px-2 py-1 rounded border border-[var(--color-accent)] bg-transparent text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-              inputMode="numeric"
-              pattern="[0-9]*"
-            />
-            <button type="submit" className="button button-secondary" style={{ minWidth: 48 }}>Go</button>
-          </form>
+    <div className="flex flex-col w-full min-h-[min(100dvh,600px)] h-auto bg-[var(--color-bg)] relative p-4 md:p-8">
+      <h1 className="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-6 mt-2 tracking-widest uppercase font-heading">Manual</h1>
+      <div className="flex flex-row flex-wrap mweb-flex-col w-full h-auto">
+        <div className="max-w-3xl mx-auto p-6 bg-[rgba(26,26,26,0.95)] rounded shadow-lg mt-8 text-[var(--color-white)] select-none w-full">
+          <div className="flex flex-col items-center">
+            <canvas ref={canvasRef} style={{ maxWidth: "100%", borderRadius: 8, boxShadow: "0 2px 8px #0008" }} />
+            {loading && <div className="mt-4 text-[var(--color-accent)]">Loading...</div>}
+            <div className="flex gap-4 mt-4">
+              <button onClick={handlePrev} disabled={pageNumber === 1} className="button button-primary" style={{ minWidth: 64 }}>Prev</button>
+              <span>Page {pageNumber} of {numPages}</span>
+              <button onClick={handleNext} disabled={pageNumber === numPages} className="button button-primary" style={{ minWidth: 64 }}>Next</button>
+              <form onSubmit={handleInputGo} className="flex items-center gap-1">
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  placeholder="Go to page"
+                  className="w-16 px-2 py-1 rounded border border-[var(--color-accent)] bg-transparent text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                />
+                <button type="submit" className="button button-secondary" style={{ minWidth: 48 }}>Go</button>
+              </form>
+            </div>
+          </div>
+          <div className="text-xs text-[var(--color-accent)] mt-8">
+            This manual is strictly for reference. Downloading, copying, or redistributing is strictly prohibited.<br/>
+            All anti-download and anti-inspect measures are enabled.
+          </div>
         </div>
-      </div>
-      <div className="text-xs text-[var(--color-accent)] mt-8">
-        This manual is strictly for reference. Downloading, copying, or redistributing is strictly prohibited.<br/>
-        All anti-download and anti-inspect measures are enabled.
       </div>
     </div>
   );
