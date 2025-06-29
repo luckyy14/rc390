@@ -1,4 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
+import { useLayoutEffect } from "react";
+import gsap from "gsap";
 
 // AudioVisualizer: Circular waveform visualizer with play/pause button in the center
 export default function AudioVisualizer({
@@ -113,52 +115,63 @@ export default function AudioVisualizer({
   };
 
   // Center hexagon button
-  const hexSize = 60; // scale up hexagon for larger canvas
+  const hexSize = 70; // slightly larger for better balance
+  // Center hexagon at (hexSize, hexSize) in SVG, so center play icon at same
   const hexPoints = Array.from({ length: 6 }, (_, i) => {
     const angle = (Math.PI / 3) * i - Math.PI / 6;
     return [
-      size / 2 + Math.cos(angle) * hexSize,
-      size / 2 + Math.sin(angle) * hexSize,
+      hexSize + Math.cos(angle) * hexSize,
+      hexSize + Math.sin(angle) * hexSize,
     ];
   });
   const hexPath = hexPoints.map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `L${p[0]},${p[1]}`)).join(" ") + " Z";
   const accentColor = typeof window !== 'undefined' ? (getComputedStyle(document.documentElement).getPropertyValue('--color-accent') || '#FF6F00') : '#FF6F00';
+  const hexFillColor = '#111';
 
+  // Center the canvas and button absolutely
   return (
     <div style={{ position: "relative", width: size, height: size }} {...props}>
       <canvas
         ref={canvasRef}
         width={size}
         height={size}
-        style={{ display: "block", width: size, height: size, background: "transparent" }}
+        style={{ display: "block", width: size, height: size, background: "transparent", position: "absolute", left: 0, top: 0, zIndex: 1 }}
       />
       <button
         onClick={handlePlayPause}
         className="button button-tertiary"
         style={{
+          boxShadow: "none",
           position: "absolute",
-          left: size / 2 - hexSize,
-          top: size / 2 - hexSize,
-          width: hexSize * 2,
-          height: hexSize * 2,
+          left: '50%',
+          top: '50%',
+          width: hexSize * 2, // Restore hexagon size
+          height: hexSize * 2, // Restore hexagon size
           background: "none",
           border: "none",
           cursor: "pointer",
           outline: "none",
           zIndex: 2,
+          padding: 0,
+          transform: 'translate(-60%, -55%)', // Centered
         }}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
-        <svg width={hexSize * 2} height={hexSize * 2} viewBox={`0 0 ${hexSize * 2} ${hexSize * 2}`}
-          style={{ display: "block" }}>
-          <path d={hexPath} fill={accentColor} stroke="#fff" strokeWidth="3" />
+        <svg
+          id="audio-hex-icon"
+          width={hexSize * 2}
+          height={hexSize * 2}
+          viewBox={`0 0 ${hexSize * 2} ${hexSize * 2}`}
+          style={{ display: "block", filter: "drop-shadow(0 4px 16px rgba(0,0,0,0.25))" }}
+        >
+          <path d={hexPath} fill={hexFillColor} />
           {isPlaying ? (
-            <g>
-              <rect x={hexSize - 12} y={hexSize - 20} width="10" height="40" rx="2" fill={accentColor} />
-              <rect x={hexSize + 2} y={hexSize - 20} width="10" height="40" rx="2" fill={accentColor} />
+            <g id="pause-group">
+              <rect x={hexSize - 6} y={hexSize - 16} width="8" height="32" rx="2" fill={accentColor} />
+              <rect x={hexSize + 6} y={hexSize - 16} width="8" height="32" rx="2" fill={accentColor} />
             </g>
           ) : (
-            <polygon points={`${hexSize - 8},${hexSize - 18} ${hexSize + 18},${hexSize} ${hexSize - 8},${hexSize + 18}`} fill={accentColor} />
+            <polygon id="play-icon" points={`${hexSize - 8},${hexSize - 12} ${hexSize + 16},${hexSize} ${hexSize - 8},${hexSize + 12}`} fill={accentColor} />
           )}
         </svg>
       </button>
