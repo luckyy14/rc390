@@ -1,4 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Rajdhani:wght@400;700&family=Inter:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Rajdhani:wght@400;700&family=Inter:wght@400;700&display=swap');/* Hide scrollbars for all pages */
+html, body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 @import "../src/theme/colors.css";
 @import "../src/theme/button.css";
 @import "../src/theme/bike-theme.css";

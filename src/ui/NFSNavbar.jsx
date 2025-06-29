@@ -24,14 +24,17 @@ export default function NFSNavbar() {
   const audioRef = useRef(null);
   const lastTickTime = useRef(0);
 
+  // Track if user interacted (for autoplay policy)
+  const userInteracted = useRef(false);
+
   // Play tick sound, speed up if fast
   const playTick = (rate = 1) => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      audioRef.current.playbackRate = rate;
-      audioRef.current.play();
-    }
+    if (!userInteracted.current) return;
+    // Use a new Audio instance for each tick to allow overlap
+    const tick = new window.Audio("/assets/audio/tick.mp3");
+    tick.playbackRate = rate;
+    tick.volume = 1;
+    tick.play().catch(() => {});
   };
 
   // Inertia animation
@@ -156,7 +159,7 @@ export default function NFSNavbar() {
   }, [selected]);
 
   return (
-    <nav className="nfs-menu" style={{ border: "2px solid red" }}>
+    <nav className="nfs-menu" style={{ border: "2px solid red", overflow:"hidden" }}>
       <div className="nfs-header">Midnight Torque</div>
       <audio ref={audioRef} src="/assets/audio/tick.mp3" preload="auto" />
       <div
@@ -175,20 +178,38 @@ export default function NFSNavbar() {
           if (el) {
             el._wheelHandler && el.removeEventListener("wheel", el._wheelHandler);
             el._wheelHandler = function(e) {
+              userInteracted.current = true;
               e.preventDefault();
               e.stopPropagation();
-              let dir = e.deltaY > 0 ? 1 : -1;
-              setSelected(s => {
-                let next = (s + dir + len) % len;
-                playTick(1);
+              let ticks = Math.round(e.deltaY / 40);
+              if (Math.abs(e.deltaY) < 60) ticks = e.deltaY > 0 ? 1 : -1;
+              if (ticks === 0) ticks = e.deltaY > 0 ? 1 : -1;
+              let steps = Math.abs(ticks);
+              let dir = Math.sign(ticks);
+              let tickRate = Math.min(2.5, 1 + Math.abs(e.deltaY) / 120);
+              if (steps === 1) {
+                let next = (selected + dir + len) % len;
+                setSelected(next);
+                playTick(tickRate);
                 navigate(nfsnavitems[next].path);
-                return next;
-              });
+              } else {
+                let animateTicks = (step = 0, curr = selected) => {
+                  let next = (curr + dir + len) % len;
+                  setSelected(next);
+                  playTick(tickRate);
+                  navigate(nfsnavitems[next].path);
+                  if (step + 1 < steps) {
+                    setTimeout(() => animateTicks(step + 1, next), 60 / tickRate);
+                  }
+                };
+                animateTicks();
+              }
             };
             el.addEventListener("wheel", el._wheelHandler, { passive: false });
           }
         }}
         onPointerDown={e => {
+          userInteracted.current = true;
           dragging.current = true;
           lastX.current = e.clientX;
           velocity.current = 0;
@@ -201,16 +222,29 @@ export default function NFSNavbar() {
           const dx = e.clientX - lastX.current;
           dragging.accum += dx;
           lastX.current = e.clientX;
-          // Change item for every 60px dragged
+          // Animate through each item, speed up tick for fast drags
+          let ticks = 0;
           while (Math.abs(dragging.accum) > 40) {
             let dir = dragging.accum > 0 ? -1 : 1;
-            setSelected(s => {
-              let next = (s + dir + len) % len;
-              playTick(1);
-              navigate(nfsnavitems[next].path);
-              return next;
-            });
+            ticks += dir;
             dragging.accum -= 40 * Math.sign(dragging.accum);
+          }
+          if (ticks !== 0) {
+            let steps = Math.abs(ticks);
+            let dir = Math.sign(ticks);
+            let tickRate = Math.min(2.5, 1 + Math.abs(dx) / 30);
+            let animateTicks = (step = 0) => {
+              setSelected(s => {
+                let next = (s + dir + len) % len;
+                playTick(tickRate);
+                navigate(nfsnavitems[next].path);
+                return next;
+              });
+              if (step + 1 < steps) {
+                setTimeout(() => animateTicks(step + 1), 60 / tickRate);
+              }
+            };
+            animateTicks();
           }
           // Velocity for inertia
           velocity.current = dx / (Date.now() - (dragging.lastMoveTime || Date.now()) + 1) * 10;
@@ -242,10 +276,12 @@ export default function NFSNavbar() {
             data-idx={idx}
             style={getTransform(idx)}
             onClick={() => {
+              userInteracted.current = true;
               handleSelect(idx);
             }}
             onKeyDown={(e) => {
               if ((e.key === " " || e.key === "Enter")) {
+                userInteracted.current = true;
                 handleSelect(idx);
                 e.preventDefault();
               }
