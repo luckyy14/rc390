@@ -1,12 +1,17 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 
+// Safari/legacy browser compatibility helpers
+const isSafari = typeof window !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
 function isIOS() {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 }
 
 const Shop = () => {
   const isIOSDevice = typeof window !== 'undefined' && isIOS();
+  // Safari: model-viewer AR Quick Look only works on iOS, fallback for other browsers
+  const arModes = isSafari && !isIOSDevice ? 'scene-viewer' : 'scene-viewer webxr quick-look';
 
   return (
     <div className="flex flex-col w-full min-h-[min(100dvh,600px)] h-auto bg-[var(--color-bg)] relative p-4 md:p-8">
@@ -34,7 +39,7 @@ const Shop = () => {
           <model-viewer
             src="/assets/ktm.glb"
             ar
-            ar-modes="scene-viewer webxr quick-look"
+            ar-modes={arModes}
             camera-controls
             auto-rotate
             style={{ width: '100%', maxWidth: '400px', height: '400px', background: '#222', borderRadius: '16px', margin: '2rem auto' }}

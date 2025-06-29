@@ -39,8 +39,9 @@ const Manual = () => {
       const viewport = page.getViewport({ scale: 1.5 });
       const canvas = canvasRef.current;
       const context = canvas.getContext("2d");
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
+      // Safari: force canvas size as integer to avoid blurry rendering
+      canvas.height = Math.round(viewport.height);
+      canvas.width = Math.round(viewport.width);
       page.render({ canvasContext: context, viewport }).promise.then(() => {
         setLoading(false);
       });
@@ -90,6 +91,9 @@ const Manual = () => {
     }
     setInputValue("");
   };
+
+  // Safari/legacy browser compatibility helpers
+  const isSafari = typeof window !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
   return (
     <div className="flex flex-col w-full min-h-[min(100dvh,600px)] h-auto bg-[var(--color-bg)] relative p-4 md:p-8">

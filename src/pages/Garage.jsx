@@ -125,6 +125,9 @@ function WaterSprayCursor({ show, radius }) {
   );
 }
 
+// Safari/legacy browser compatibility helpers
+const isSafari = typeof window !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
 const Garage = () => {
   const [foamLayers, setFoamLayers] = useState([]);
   const [wipeRadius, setWipeRadius] = useState(0.25);

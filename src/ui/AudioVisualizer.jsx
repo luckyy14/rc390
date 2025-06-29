@@ -20,6 +20,9 @@ export default function AudioVisualizer({
   const [dataArray, setDataArray] = useState(null);
   const [srcNode, setSrcNode] = useState(null);
 
+  // Safari/legacy browser compatibility helpers
+  const isSafari = typeof window !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
   // Helper to clean up audio context and source node
   const cleanupAudio = () => {
     if (srcNode) {
@@ -36,18 +39,46 @@ export default function AudioVisualizer({
 
   useEffect(() => {
     if (isPlaying && audioRef.current) {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      // Safari requires AudioContext to be created in response to a user gesture
+      let ctx;
+      try {
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) {
+        ctx = window.webkitAudioContext ? new window.webkitAudioContext() : null;
+      }
+      if (!ctx) return;
       const analyserNode = ctx.createAnalyser();
+      // Safari: analyserNode.fftSize must be power of 2 and <= 2048
       analyserNode.fftSize = 256;
       const dataArr = new Uint8Array(analyserNode.frequencyBinCount);
-      const sourceNode = ctx.createMediaElementSource(audioRef.current);
+      // Safari: createMediaElementSource can only be used once per audio element, so force remount
+      let sourceNode;
+      try {
+        sourceNode = ctx.createMediaElementSource(audioRef.current);
+      } catch (e) {
+        // fallback: force remount audio element
+        setAudioKey((k) => k + 1);
+        setIsPlaying(false);
+        return;
+      }
       setSrcNode(sourceNode);
       sourceNode.connect(analyserNode);
       analyserNode.connect(ctx.destination);
       setAudioCtx(ctx);
       setAnalyser(analyserNode);
       setDataArray(dataArr);
-      audioRef.current.play();
+      // Safari: must call play() in a user gesture, and resume context if suspended
+      const playAudio = async () => {
+        try {
+          if (ctx.state === 'suspended') {
+            await ctx.resume();
+          }
+          await audioRef.current.play();
+        } catch (err) {
+          // Optionally handle error
+        }
+      };
+      playAudio();
     }
     return () => {
       cleanupAudio();
@@ -63,11 +94,16 @@ export default function AudioVisualizer({
     const ctx = canvas.getContext("2d");
     let animationId;
     // Get accent color from CSS variable
-    const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--color-accent') || '#FF6F00';
+    let accentColor = '#FF6F00';
+    try {
+      accentColor = getComputedStyle(document.documentElement).getPropertyValue('--color-accent') || '#FF6F00';
+    } catch (e) {}
     ctx.clearRect(0, 0, size, size);
     let lastDataArray = new Uint8Array(dataArray.length);
+    // --- Make waveform crisper by updating only every 8th frame ---
+    const SKIP_FRAMES = 18;
     const draw = () => {
-      frameRef.current = (frameRef.current + 1) % 4; // Only update every 4th frame
+      frameRef.current = (frameRef.current + 1) % SKIP_FRAMES;
       if (frameRef.current === 0) {
         analyser.getByteTimeDomainData(dataArray);
         lastDataArray.set(dataArray);
