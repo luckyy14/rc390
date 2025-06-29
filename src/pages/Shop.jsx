@@ -26,7 +26,6 @@ const Shop = () => {
         Shop
       </h1>
       <div className="flex flex-row flex-wrap mweb-flex-col w-full h-auto">
-        <div className="p-4 md:p-8">Shop Page</div>
         {isIOSDevice ? (
           <a
             href="/assets/ktm.usdz"
