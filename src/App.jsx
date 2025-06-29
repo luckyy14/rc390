@@ -7,7 +7,7 @@ import Garage from "./pages/Garage";
 import Manual from "./pages/Manual";
 import { Navbar } from "./ui/Navbar";
 import TireSkidTrail from "./ui/TireSkidTrail";
-import HamburgerMenu from "./ui/HamburgerMenu";
+/* import HamburgerMenu from "./ui/HamburgerMenu"; */
 import usePhone from "./hooks/usephone";
 import NFSNavbar from "./ui/NFSNavbar";
 
@@ -17,8 +17,7 @@ const App = () => {
     <>
       <TireSkidTrail />
       <Router>
-        {isPhone && <HamburgerMenu />}
-        {!isPhone && <NFSNavbar />}
+        <NFSNavbar />
         <Routes>
           <Route path="/" element={<Navigate to="/display" replace />} />
           <Route path="/shop" element={<Shop />} />

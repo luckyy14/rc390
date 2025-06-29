@@ -155,9 +155,9 @@
 }
 
 /* Responsive: hide on mobile */
-@media (max-width: 800px) {
+/* @media (max-width: 800px) {
   .nfs-menu { display: none; }
-}
+} */
 
 /* 3D Circular Navbar Styles */
 .nfs-menu-options.nfs-menu-3d {
