@@ -10,7 +10,7 @@ const icons = {
       <rect x="5" y="9" width="10" height="4" rx="1" fill="#1A1A1A"/>
     </svg>
   ),
-  Showroom: (
+  Display: (
     <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
       <rect x="3" y="7" width="14" height="8" rx="2" fill="#FF6F00"/>
       <circle cx="7" cy="15" r="2" fill="#1A1A1A"/>
@@ -41,7 +41,7 @@ const icons = {
 
 const navItems = [
   { to: "/shop", label: "Shop" },
-  { to: "/showroom", label: "Showroom" },
+  { to: "/display", label: "Display" },
   { to: "/exhaust", label: "Exhaust" },
   { to: "/garage", label: "Garage" },
   { to: "/manual", label: "Manual" },

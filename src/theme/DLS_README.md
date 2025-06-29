@@ -57,7 +57,7 @@
    - Lighting: Orange directional light + ambient matte black fill.
    - UI should not interfere with 3D canvas — keep floating UI minimal.
 
-2. **Showroom Feel**
+2. **Display Feel**
    - Add depth using glassmorphism with dark blur:
      ```css
      backdrop-filter: blur(20px);

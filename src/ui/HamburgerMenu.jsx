@@ -4,7 +4,7 @@ import { gsap } from "gsap";
 
 const navItems = [
   { to: "/shop", label: "Shop" },
-  { to: "/showroom", label: "Showroom" },
+  { to: "/display", label: "Display" },
   { to: "/exhaust", label: "Exhaust" },
   { to: "/garage", label: "Garage" },
   { to: "/manual", label: "Manual" },
