@@ -55,6 +55,18 @@ const menuOptions = [
       </svg>
     ),
   },
+  {
+    label: "EXHAUST",
+    path: "/exhaust",
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="22" width="20" height="8" rx="3" fill="#fff" stroke="#111" strokeWidth="2"/>
+        <rect x="30" y="24" width="8" height="4" rx="2" fill="#fff" stroke="#111" strokeWidth="2"/>
+        <ellipse cx="40" cy="26" rx="3" ry="3" fill="#fff" stroke="#111" strokeWidth="2"/>
+        <path d="M12 30 Q14 36 24 36 Q34 36 36 30" stroke="#111" strokeWidth="2" fill="none"/>
+      </svg>
+    ),
+  },
 ];
 
 export default function NFSNavbar() {

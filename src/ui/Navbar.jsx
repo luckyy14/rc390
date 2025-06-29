@@ -62,10 +62,12 @@ export const Navbar = () => {
 
   return (
     <nav
-      className="sticky top-0 z-50 flex items-center justify-between px-10 py-5 navbar backdrop-blur-lg bg-[rgba(26,26,26,0.85)] border-b border-[var(--color-border)] shadow-lg"
+      className="sticky top-0 z-50 flex items-center justify-between px-10 py-5 navbar backdrop-blur-lg border-b border-[var(--color-border)]"
       style={{
         fontFamily: "Oswald, Rajdhani, Inter, sans-serif",
         letterSpacing: "1px",
+        background: "transparent",
+        boxShadow: "0 0 80px 10px #ff6600cc, 0 0 0 100vmax rgba(26,26,26,0.85) inset"
       }}
     >
       <div className="flex items-center gap-3">
@@ -102,6 +104,26 @@ export const Navbar = () => {
                   className="absolute left-0 -bottom-1 w-full h-0.5 rounded bg-[var(--color-accent)] scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"
                   aria-hidden="true"
                 ></span>
+                {({ isActive }) => (
+                  <div
+                    className="reticle"
+                    style={{
+                      position: "absolute",
+                      top: -8,
+                      left: -8,
+                      right: -8,
+                      bottom: -8,
+                      pointerEvents: "none",
+                      opacity: isActive ? 1 : 0,
+                      transition: "opacity 0.2s"
+                    }}
+                  >
+                    <div className="corner tl"></div>
+                    <div className="corner tr"></div>
+                    <div className="corner bl"></div>
+                    <div className="corner br"></div>
+                  </div>
+                )}
               </span>
             </span>
           </NavLink>

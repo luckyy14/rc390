@@ -61,7 +61,11 @@ export default function HamburgerMenu() {
       {open && (
         <nav
           ref={menuRef}
-          className="fixed top-0 left-0 w-full h-full bg-[rgba(26,26,26,0.97)] flex flex-col items-center justify-center gap-8 z-[99] md:hidden"
+          className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center gap-8 z-[99] md:hidden"
+          style={{
+            background: "transparent",
+            boxShadow: "0 0 80px 10px #ff6600cc, 0 0 0 100vmax rgba(26,26,26,0.97) inset"
+          }}
         >
           {navItems.map((item) => (
             <NavLink
@@ -75,6 +79,26 @@ export default function HamburgerMenu() {
               onClick={() => setOpen(false)}
             >
               {item.label}
+              {({ isActive }) => (
+                <div
+                  className="reticle"
+                  style={{
+                    position: "absolute",
+                    top: -8,
+                    left: -8,
+                    right: -8,
+                    bottom: -8,
+                    pointerEvents: "none",
+                    opacity: isActive ? 1 : 0,
+                    transition: "opacity 0.2s"
+                  }}
+                >
+                  <div className="corner tl"></div>
+                  <div className="corner tr"></div>
+                  <div className="corner bl"></div>
+                  <div className="corner br"></div>
+                </div>
+              )}
             </NavLink>
           ))}
         </nav>

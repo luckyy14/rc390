@@ -225,6 +225,18 @@ export default function AudioVisualizer({
   const accentColor = typeof window !== 'undefined' ? (getComputedStyle(document.documentElement).getPropertyValue('--color-accent') || '#FF6F00') : '#FF6F00';
   const hexFillColor = '#111';
 
+  // Responsive transform for play/pause button
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= 600 : false
+  );
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 600);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Center the canvas and button absolutely
   return (
     <div style={{ position: "relative", width: size, height: size }} {...props}>
@@ -250,7 +262,7 @@ export default function AudioVisualizer({
           outline: "none",
           zIndex: 2,
           padding: 0,
-          transform: 'translate(-60%, -55%)', // Centered
+          transform: isMobile ? 'translate(-50%, -50%)' : 'translate(-60%, -55%)', // Responsive Centered
         }}
         aria-label={isPlaying ? "Pause" : "Play"}
       >
