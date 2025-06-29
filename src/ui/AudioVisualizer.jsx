@@ -90,7 +90,7 @@ export default function AudioVisualizer({
   // One particle per bar, each with radial inertia
   const particleRadiiRef = useRef([]);
   const particleRadialVelsRef = useRef([]);
-  const GRAVITY = 0.25; // inward gravity (radial)
+  const GRAVITY = 0.5; // inward gravity (radial)
   const PUSH = 2.5; // outward push strength
 
   // Add a frame counter to slow down waveform updates
@@ -106,7 +106,7 @@ export default function AudioVisualizer({
     } catch (e) {}
     ctx.clearRect(0, 0, size, size);
     let lastDataArray = new Uint8Array(dataArray.length);
-    const SKIP_FRAMES = 18;
+    const SKIP_FRAMES = 22;
     // --- Top bar/particle state ---
     const draw = () => {
       const effectiveBarCount = Math.floor(barCount * 0.7);
@@ -163,7 +163,7 @@ export default function AudioVisualizer({
           if (radialVel < PUSH) radialVel = PUSH;
         } else {
           // Gravity pulls inward
-          radialVel -= GRAVITY;
+          radialVel -= (GRAVITY) * (1 - v); // less gravity for lower volume
           particleRadius += radialVel;
           // If particle falls inside bar, stick to bar
           if (particleRadius < particleRadiusBar) {
