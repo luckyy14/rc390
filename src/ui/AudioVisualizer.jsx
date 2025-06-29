@@ -86,6 +86,13 @@ export default function AudioVisualizer({
     // eslint-disable-next-line
   }, [isPlaying, audioKey]);
 
+  // --- Particle/Bar Inertia State ---
+  // One particle per bar, each with radial inertia
+  const particleRadiiRef = useRef([]);
+  const particleRadialVelsRef = useRef([]);
+  const GRAVITY = 0.25; // inward gravity (radial)
+  const PUSH = 2.5; // outward push strength
+
   // Add a frame counter to slow down waveform updates
   const frameRef = useRef(0);
   useEffect(() => {
@@ -93,46 +100,100 @@ export default function AudioVisualizer({
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     let animationId;
-    // Get accent color from CSS variable
     let accentColor = '#FF6F00';
     try {
       accentColor = getComputedStyle(document.documentElement).getPropertyValue('--color-accent') || '#FF6F00';
     } catch (e) {}
     ctx.clearRect(0, 0, size, size);
     let lastDataArray = new Uint8Array(dataArray.length);
-    // --- Make waveform crisper by updating only every 8th frame ---
     const SKIP_FRAMES = 18;
+    // --- Top bar/particle state ---
     const draw = () => {
+      const effectiveBarCount = Math.floor(barCount * 0.7);
       frameRef.current = (frameRef.current + 1) % SKIP_FRAMES;
       if (frameRef.current === 0) {
         analyser.getByteTimeDomainData(dataArray);
         lastDataArray.set(dataArray);
       }
       ctx.clearRect(0, 0, size, size);
-      const minBarLength = 0.5; // Minimal for initial state
+      const minBarLength = 0.5;
       const maxBarLength = 20;
       const expansionMultiplier = 3;
-      const radius = size / 2 - (maxBarLength * expansionMultiplier) - 16; // 16px padding from edge
-      // Reduce barCount for more gap between bars
-      const effectiveBarCount = Math.floor(barCount * 0.7); // e.g. 90 bars if barCount=128
+      const radius = size / 2 - (maxBarLength * expansionMultiplier) - 16;
+      // Draw waveform bars and particles
+      let maxBarLengthVal = 0;
+      let barTipRadius = radius;
+      // Ensure particle arrays are correct length
+      if (particleRadiiRef.current.length !== effectiveBarCount) {
+        particleRadiiRef.current = Array(effectiveBarCount).fill(null);
+        particleRadialVelsRef.current = Array(effectiveBarCount).fill(0);
+      }
+      const centerX = size / 2;
+      const centerY = size / 2;
       for (let i = 0; i < effectiveBarCount; i++) {
         const angle = (i / effectiveBarCount) * 2 * Math.PI - Math.PI / 2;
-        const v = lastDataArray[i % lastDataArray.length] / 255.0;
+        const v = lastDataArray[i] / 255.0;
         const barLength = v < 0.05 ? minBarLength : minBarLength + v * maxBarLength * expansionMultiplier;
-        const x1 = size / 2 + Math.cos(angle) * radius;
-        const y1 = size / 2 + Math.sin(angle) * radius;
-        const x2 = size / 2 + Math.cos(angle) * (radius + barLength);
-        const y2 = size / 2 + Math.sin(angle) * (radius + barLength);
+        if (i === 0) {
+          maxBarLengthVal = barLength;
+          barTipRadius = radius + barLength;
+        }
+        const x1 = centerX + Math.cos(angle) * radius;
+        const y1 = centerY + Math.sin(angle) * radius;
+        const x2 = centerX + Math.cos(angle) * (radius + barLength);
+        const y2 = centerY + Math.sin(angle) * (radius + barLength);
+        // Draw bar
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.strokeStyle = accentColor;
         ctx.lineWidth = 2;
-        ctx.shadowBlur = 1; // Much less blur
+        ctx.shadowBlur = 1;
         ctx.shadowColor = accentColor;
         ctx.stroke();
+        ctx.shadowBlur = 0;
+        // --- Particle inertia logic for this bar ---
+        const particleRadiusMin = radius + 10;
+        const particleRadiusBar = radius + barLength + 10;
+        let particleRadius = particleRadiiRef.current[i] === null ? particleRadiusBar - 40 : particleRadiiRef.current[i];
+        let radialVel = particleRadialVelsRef.current[i];
+        // If bar pushes outward, push particle outward
+        if (particleRadius < particleRadiusBar) {
+          particleRadius = particleRadiusBar;
+          if (radialVel < PUSH) radialVel = PUSH;
+        } else {
+          // Gravity pulls inward
+          radialVel -= GRAVITY;
+          particleRadius += radialVel;
+          // If particle falls inside bar, stick to bar
+          if (particleRadius < particleRadiusBar) {
+            particleRadius = particleRadiusBar;
+            radialVel = 0;
+          }
+          // Prevent particle from going inside minimum radius
+          if (particleRadius < particleRadiusMin) {
+            particleRadius = particleRadiusMin;
+            radialVel = 0;
+          }
+        }
+        particleRadiiRef.current[i] = particleRadius;
+        particleRadialVelsRef.current[i] = radialVel;
+        // Draw the particle as a flat plate (rectangle) perpendicular to the bar
+        ctx.save();
+        const px = centerX + Math.cos(angle) * particleRadius;
+        const py = centerY + Math.sin(angle) * particleRadius;
+        const plateWidth = 8; // slightly wider than bar
+        const plateHeight = 3; // flat
+        const perpAngle = angle + Math.PI / 2;
+        ctx.translate(px, py);
+        ctx.rotate(perpAngle);
+        ctx.beginPath();
+        ctx.rect(-plateWidth / 2, -plateHeight / 2, plateWidth, plateHeight);
+        ctx.fillStyle = accentColor;
+        ctx.shadowBlur = 0;
+        ctx.fill();
+        ctx.restore();
       }
-      ctx.shadowBlur = 0;
       animationId = requestAnimationFrame(draw);
     };
     draw();
