@@ -9,10 +9,10 @@ export default function Display() {
   return (
     <div className="flex flex-col w-full min-h-[min(100dvh,600px)] h-auto bg-[var(--color-bg)] relative p-4 md:p-8">
       <Helmet>
-        <title>KTM RC 390 Display | DarkRide</title>
+        <title>KTM RC 390 Display | MidnightTorque</title>
         <meta name="description" content="View the KTM RC 390 in a 3D interactive display. Rotate, zoom, and explore every detail of the superbike." />
-        <meta name="keywords" content="KTM RC 390, display, 3D, motorcycle, superbike, DarkRide" />
-        <meta property="og:title" content="KTM RC 390 Display | DarkRide" />
+        <meta name="keywords" content="KTM RC 390, display, 3D, motorcycle, superbike, MidnightTorque" />
+        <meta property="og:title" content="KTM RC 390 Display | MidnightTorque" />
         <meta property="og:description" content="View the KTM RC 390 in a 3D interactive display. Rotate, zoom, and explore every detail of the superbike." />
       </Helmet>
       <h1 className="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-6 mt-2 tracking-widest uppercase font-heading">

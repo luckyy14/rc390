@@ -98,7 +98,7 @@ export default function NFSNavbar() {
 
   return (
     <nav className="nfs-menu">
-      <div className="nfs-header">MAIN MENU</div>
+      <div className="nfs-header">Midnight Torque</div>
       <div className="nfs-menu-options nfs-menu-3d">
         {nfsnavitems.map((opt, idx) => (
           <div

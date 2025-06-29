@@ -1,4 +1,4 @@
-# DarkRide Design Language System (DLS)
+# MidnightTorque Design Language System (DLS)
 
 ## 🎨 Color Palette
 
@@ -107,4 +107,4 @@
 - **Icons:** Lucide, FontAwesome
 
 ---
-This file documents the DarkRide DLS for both designers and developers. Use these tokens and guidelines for all UI work to ensure consistency.
+This file documents the MidnightTorque DLS for both designers and developers. Use these tokens and guidelines for all UI work to ensure consistency.

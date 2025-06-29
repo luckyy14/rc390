@@ -149,10 +149,10 @@ const Garage = () => {
   return (
     <div className="flex flex-col w-full min-h-[min(100dvh,600px)] h-auto bg-[var(--color-bg)] relative p-4 md:p-8">
       <Helmet>
-        <title>KTM RC 390 Garage | DarkRide</title>
+        <title>KTM RC 390 Garage | MidnightTorque</title>
         <meta name="description" content="Interact with the KTM RC 390 in the virtual garage. Add foam, wipe, and explore the 3D model in detail." />
-        <meta name="keywords" content="KTM RC 390, garage, 3D, foam, wipe, motorcycle, superbike, DarkRide" />
-        <meta property="og:title" content="KTM RC 390 Garage | DarkRide" />
+        <meta name="keywords" content="KTM RC 390, garage, 3D, foam, wipe, motorcycle, superbike, MidnightTorque" />
+        <meta property="og:title" content="KTM RC 390 Garage | MidnightTorque" />
         <meta property="og:description" content="Interact with the KTM RC 390 in the virtual garage. Add foam, wipe, and explore the 3D model in detail." />
       </Helmet>
       <h1 className="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-6 mt-2 tracking-widest uppercase font-heading">Garage</h1>

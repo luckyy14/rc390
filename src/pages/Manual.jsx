@@ -98,10 +98,10 @@ const Manual = () => {
   return (
     <div className="flex flex-col w-full min-h-[min(100dvh,600px)] h-auto bg-[var(--color-bg)] relative p-4 md:p-8">
       <Helmet>
-        <title>KTM RC 390 Manual | DarkRide</title>
+        <title>KTM RC 390 Manual | MidnightTorque</title>
         <meta name="description" content="Read the official KTM RC 390 manual online. Browse, search, and view every page of the superbike's manual." />
-        <meta name="keywords" content="KTM RC 390, manual, PDF, motorcycle, superbike, DarkRide" />
-        <meta property="og:title" content="KTM RC 390 Manual | DarkRide" />
+        <meta name="keywords" content="KTM RC 390, manual, PDF, motorcycle, superbike, MidnightTorque" />
+        <meta property="og:title" content="KTM RC 390 Manual | MidnightTorque" />
         <meta property="og:description" content="Read the official KTM RC 390 manual online. Browse, search, and view every page of the superbike's manual." />
       </Helmet>
       <h1 className="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-6 mt-2 tracking-widest uppercase font-heading">Manual</h1>

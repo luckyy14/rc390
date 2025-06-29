@@ -16,10 +16,10 @@ const Shop = () => {
   return (
     <div className="flex flex-col w-full min-h-[min(100dvh,600px)] h-auto bg-[var(--color-bg)] relative p-4 md:p-8">
       <Helmet>
-        <title>KTM RC 390 Shop | DarkRide</title>
+        <title>KTM RC 390 Shop | MidnightTorque</title>
         <meta name="description" content="Shop for KTM RC 390 parts, accessories, and official merchandise. Find everything you need for your superbike." />
-        <meta name="keywords" content="KTM RC 390, shop, parts, accessories, merchandise, motorcycle, DarkRide" />
-        <meta property="og:title" content="KTM RC 390 Shop | DarkRide" />
+        <meta name="keywords" content="KTM RC 390, shop, parts, accessories, merchandise, motorcycle, MidnightTorque" />
+        <meta property="og:title" content="KTM RC 390 Shop | MidnightTorque" />
         <meta property="og:description" content="Shop for KTM RC 390 parts, accessories, and official merchandise. Find everything you need for your superbike." />
       </Helmet>
       <h1 className="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-6 mt-2 tracking-widest uppercase font-heading">

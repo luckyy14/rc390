@@ -38,7 +38,7 @@ export const Navbar = () => {
           className="text-[var(--color-white)] text-2xl font-bold tracking-widest"
           style={{ fontFamily: "Oswald, Rajdhani, Inter, sans-serif" }}
         >
-          DARKRIDE
+          MidnightTorque
         </span>
       </div>
       <div className="flex gap-12">
