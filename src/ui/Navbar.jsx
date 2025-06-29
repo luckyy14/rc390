@@ -2,50 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { gsap } from "gsap";
 
-// SVG icons for each tab
-const icons = {
-  Shop: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-      <rect x="2" y="6" width="16" height="10" rx="2" fill="#FF6F00"/>
-      <rect x="5" y="9" width="10" height="4" rx="1" fill="#1A1A1A"/>
-    </svg>
-  ),
-  Display: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-      <rect x="3" y="7" width="14" height="8" rx="2" fill="#FF6F00"/>
-      <circle cx="7" cy="15" r="2" fill="#1A1A1A"/>
-      <circle cx="13" cy="15" r="2" fill="#1A1A1A"/>
-    </svg>
-  ),
-  Exhaust: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-      <rect x="4" y="9" width="8" height="4" rx="1" fill="#FF6F00"/>
-      <rect x="12" y="10" width="4" height="2" rx="1" fill="#1A1A1A"/>
-      <rect x="2" y="10" width="2" height="2" rx="1" fill="#1A1A1A"/>
-    </svg>
-  ),
-  Garage: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-      <rect x="3" y="8" width="14" height="7" rx="2" fill="#FF6F00"/>
-      <rect x="7" y="11" width="6" height="4" rx="1" fill="#1A1A1A"/>
-    </svg>
-  ),
-  Manual: (
-    <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-      <rect x="3" y="4" width="14" height="12" rx="2" fill="#FF6F00"/>
-      <rect x="6" y="7" width="8" height="2" rx="1" fill="#1A1A1A"/>
-      <rect x="6" y="11" width="5" height="2" rx="1" fill="#1A1A1A"/>
-    </svg>
-  ),
-};
-
-const navItems = [
-  { to: "/shop", label: "Shop" },
-  { to: "/display", label: "Display" },
-  { to: "/exhaust", label: "Exhaust" },
-  { to: "/garage", label: "Garage" },
-  { to: "/manual", label: "Manual" },
-];
+import { NAV_ITEMS } from "./nav-items.jsx";
 
 export const Navbar = () => {
   const logoRef = useRef(null);
@@ -85,7 +42,7 @@ export const Navbar = () => {
         </span>
       </div>
       <div className="flex gap-12">
-        {navItems.map((item) => (
+        {NAV_ITEMS.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
@@ -97,7 +54,7 @@ export const Navbar = () => {
             }
           >
             <span className="flex items-center gap-2">
-              {icons[item.label]}
+              {item.iconSmall}
               <span className="relative">
                 {item.label}
                 <span

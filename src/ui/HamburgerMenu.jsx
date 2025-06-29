@@ -2,13 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { gsap } from "gsap";
 
-const navItems = [
-  { to: "/shop", label: "Shop" },
-  { to: "/display", label: "Display" },
-  { to: "/exhaust", label: "Exhaust" },
-  { to: "/garage", label: "Garage" },
-  { to: "/manual", label: "Manual" },
-];
+// Unified nav items
+// Unified nav items
+import { NAV_ITEMS } from "./nav-items.jsx";
 
 // SVG gear icon for the hamburger button
 const GearIcon = () => (
@@ -67,7 +63,7 @@ export default function HamburgerMenu() {
             boxShadow: "0 0 80px 10px #ff6600cc, 0 0 0 100vmax rgba(26,26,26,0.97) inset"
           }}
         >
-          {navItems.map((item) => (
+          {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
