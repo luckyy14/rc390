@@ -183,7 +183,7 @@ export default function AudioVisualizer({
         const px = centerX + Math.cos(angle) * particleRadius;
         const py = centerY + Math.sin(angle) * particleRadius;
         const plateWidth = 8; // slightly wider than bar
-        const plateHeight = 3; // flat
+        const plateHeight = 1; // flat
         const perpAngle = angle + Math.PI / 2;
         ctx.translate(px, py);
         ctx.rotate(perpAngle);
