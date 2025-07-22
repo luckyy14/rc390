@@ -6,7 +6,7 @@ import { BikeCard } from "../ui/FolderCard";
 
 export default function Home() {
   return (
-    <div className="relative min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden bg-[var(--color-bg)]">
+    <div className="relative flex flex-col items-center justify-center overflow-hidden bg-[var(--color-bg)]">
       <Helmet>
         <title>KTM RC 390 | MidnightTorque</title>
         <meta name="description" content="KTM RC 390 homepage: specs, highlights, 3D viewer, manual, and more." />
@@ -22,10 +22,6 @@ export default function Home() {
         style={{ zIndex: 0 }}
         aria-hidden="true"
       />
-      {/* Camera Slider Demo */}
-      <h2 className="text-2xl font-bold text-[var(--color-accent)] mb-4 text-center uppercase tracking-wide">
-        Camera Slider Demo
-      </h2>
       <BikeCard modelUrl="/assets/cards.glb" />
     </div>
   );

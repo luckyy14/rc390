@@ -112,7 +112,7 @@ export function BikeCard({ modelUrl = null, initialZ = 8 }) {
   }, [cameraZ]);
 
   return (
-    <div style={{ position: 'relative', width: '100%', minHeight: '600px' }}>
+    <div style={{ position: 'relative', width: '100%', minHeight: '80vh' }}>
       <div
         ref={mountRef}
         style={{
