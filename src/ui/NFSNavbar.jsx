@@ -10,6 +10,8 @@ const nfsnavitems = NAV_ITEMS.map(item => ({
   icon: item.iconLarge,
 }));
 
+import { useTextScramble } from "../hooks/useTextScramble";
+
 export default function NFSNavbar() {
   const [selected, setSelected] = useState(0);
   const navigate = useNavigate();
@@ -22,7 +24,6 @@ export default function NFSNavbar() {
   const animationRef = useRef();
   const inertiaActive = useRef(false);
   const audioRef = useRef(null);
-  const lastTickTime = useRef(0);
 
   // Track if user interacted (for autoplay policy)
   const userInteracted = useRef(false);
@@ -47,7 +48,6 @@ export default function NFSNavbar() {
     const minVel = 0.15;
     const baseTickRate = 1;
     const maxTickRate = 2.2;
-    const tickInterval = 60; // ms, minimum time between ticks
 
     const step = () => {
       if (Math.abs(v) < minVel) {
@@ -70,11 +70,6 @@ export default function NFSNavbar() {
     };
     step();
   };
-
-  // Circular navigation helpers
-  const getIdx = (offset) => (selected + offset + len) % len;
-  const leftIdx = getIdx(-1);
-  const rightIdx = getIdx(1);
 
   // Keyboard navigation (circular, no scroll on up/down)
   React.useEffect(() => {
@@ -250,7 +245,7 @@ export default function NFSNavbar() {
           velocity.current = dx / (Date.now() - (dragging.lastMoveTime || Date.now()) + 1) * 10;
           dragging.lastMoveTime = Date.now();
         }}
-        onPointerUp={e => {
+        onPointerUp={() => {
           if (!dragging.current) return;
           dragging.current = false;
           if (Math.abs(velocity.current) > 0.2) {
@@ -258,7 +253,7 @@ export default function NFSNavbar() {
           }
           velocity.current = 0;
         }}
-        onPointerLeave={e => {
+        onPointerLeave={() => {
           if (dragging.current) {
             dragging.current = false;
             if (Math.abs(velocity.current) > 0.2) {
@@ -269,30 +264,48 @@ export default function NFSNavbar() {
         }}
       >
         {nfsnavitems.map((opt, idx) => (
-          <div
-            className={`menu-option menu-3d-item${idx === selected ? " selected" : ""}`}
+          <NFSNavItemWithScramble
             key={opt.label}
-            tabIndex={0}
-            data-idx={idx}
-            style={getTransform(idx)}
-            onClick={() => {
-              userInteracted.current = true;
-              handleSelect(idx);
-            }}
-            onKeyDown={(e) => {
-              if ((e.key === " " || e.key === "Enter")) {
-                userInteracted.current = true;
-                handleSelect(idx);
-                e.preventDefault();
-              }
-            }}
-          >
-            {opt.icon}
-            <span>{opt.label}</span>
-{idx === selected && <div className="reticle" />}
-          </div>
+            opt={opt}
+            idx={idx}
+            selected={selected}
+            handleSelect={handleSelect}
+            userInteracted={userInteracted}
+            getTransform={getTransform}
+          />
         ))}
       </div>
     </nav>
+  );
+}
+
+function NFSNavItemWithScramble({ opt, idx, selected, handleSelect, userInteracted, getTransform }) {
+  const [hovered, setHovered] = React.useState(false);
+  const scrambled = useTextScramble(opt.label, hovered);
+  return (
+    <div
+      className={`menu-option menu-3d-item${idx === selected ? " selected" : ""}`}
+      key={opt.label}
+      tabIndex={0}
+      data-idx={idx}
+      style={getTransform(idx)}
+      onClick={() => {
+        userInteracted.current = true;
+        handleSelect(idx);
+      }}
+      onKeyDown={(e) => {
+        if ((e.key === " " || e.key === "Enter")) {
+          userInteracted.current = true;
+          handleSelect(idx);
+          e.preventDefault();
+        }
+      }}
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => setHovered(false)}
+    >
+      {opt.icon}
+      <span>{scrambled}</span>
+      {idx === selected && <div className="reticle" />}
+    </div>
   );
 }

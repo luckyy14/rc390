@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import Display from "./pages/Display";
 import Exhaust from "./pages/Exhaust";
@@ -19,7 +20,7 @@ const App = () => {
       <Router>
         <NFSNavbar />
         <Routes>
-          <Route path="/" element={<Navigate to="/display" replace />} />
+          <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/display" element={<Display />} />
           <Route path="/exhaust" element={<Exhaust />} />

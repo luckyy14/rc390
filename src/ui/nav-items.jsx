@@ -2,6 +2,22 @@
 
 export const NAV_ITEMS = [
   {
+    label: "Home",
+    to: "/",
+    iconSmall: (
+      <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+        <rect x="4" y="8" width="12" height="8" rx="2" fill="#FF6F00"/>
+        <polygon points="10,3 3,8 17,8" fill="#1A1A1A"/>
+      </svg>
+    ),
+    iconLarge: (
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <rect x="12" y="24" width="24" height="16" rx="4" fill="#fff" stroke="#111" strokeWidth="2"/>
+        <polygon points="24,10 8,24 40,24" fill="#FF6F00" stroke="#111" strokeWidth="2"/>
+      </svg>
+    ),
+  },
+  {
     label: "Shop",
     to: "/shop",
     iconSmall: (

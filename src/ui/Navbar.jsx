@@ -3,6 +3,58 @@ import { NavLink } from "react-router-dom";
 import { gsap } from "gsap";
 
 import { NAV_ITEMS } from "./nav-items.jsx";
+import { useTextScramble } from "../hooks/useTextScramble";
+
+const NavItemWithScramble = ({ item }) => {
+  const [hovered, setHovered] = React.useState(false);
+  const scrambled = useTextScramble(item.label, hovered);
+  return (
+    <NavLink
+      key={item.to}
+      to={item.to}
+      className={({ isActive }) =>
+        `relative font-semibold px-4 py-2 nav-link flex items-center gap-2 text-[var(--color-white)] transition
+        hover:text-[var(--color-accent)]
+        ${isActive ? "text-[var(--color-accent)]" : ""}
+        group`
+      }
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <span className="flex items-center gap-2">
+        {item.iconSmall}
+        <span className="relative">
+          {scrambled}
+          <span
+            className="absolute left-0 -bottom-1 w-full h-0.5 rounded bg-[var(--color-accent)] scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"
+            aria-hidden="true"
+          ></span>
+          {/* Reticle effect remains unchanged */}
+          {({ isActive }) => (
+            <div
+              className="reticle"
+              style={{
+                position: "absolute",
+                top: -8,
+                left: -8,
+                right: -8,
+                bottom: -8,
+                pointerEvents: "none",
+                opacity: isActive ? 1 : 0,
+                transition: "opacity 0.2s"
+              }}
+            >
+              <div className="corner tl"></div>
+              <div className="corner tr"></div>
+              <div className="corner bl"></div>
+              <div className="corner br"></div>
+            </div>
+          )}
+        </span>
+      </span>
+    </NavLink>
+  );
+};
 
 export const Navbar = () => {
   const logoRef = useRef(null);
@@ -43,47 +95,7 @@ export const Navbar = () => {
       </div>
       <div className="flex gap-12">
         {NAV_ITEMS.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            className={({ isActive }) =>
-              `relative font-semibold px-4 py-2 nav-link flex items-center gap-2 text-[var(--color-white)] transition
-              hover:text-[var(--color-accent)]
-              ${isActive ? "text-[var(--color-accent)]" : ""}
-              group`
-            }
-          >
-            <span className="flex items-center gap-2">
-              {item.iconSmall}
-              <span className="relative">
-                {item.label}
-                <span
-                  className="absolute left-0 -bottom-1 w-full h-0.5 rounded bg-[var(--color-accent)] scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-left"
-                  aria-hidden="true"
-                ></span>
-                {({ isActive }) => (
-                  <div
-                    className="reticle"
-                    style={{
-                      position: "absolute",
-                      top: -8,
-                      left: -8,
-                      right: -8,
-                      bottom: -8,
-                      pointerEvents: "none",
-                      opacity: isActive ? 1 : 0,
-                      transition: "opacity 0.2s"
-                    }}
-                  >
-                    <div className="corner tl"></div>
-                    <div className="corner tr"></div>
-                    <div className="corner bl"></div>
-                    <div className="corner br"></div>
-                  </div>
-                )}
-              </span>
-            </span>
-          </NavLink>
+          <NavItemWithScramble key={item.to} item={item} />
         ))}
       </div>
     </nav>
