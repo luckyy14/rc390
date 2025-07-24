@@ -223,3 +223,7 @@ Maintain clean import organization
 Include comprehensive README files in each directory
 Use TypeScript-style JSDoc comments where helpful
 These rules ensure consistency with the existing KTM RC390 codebase structure, maintaining the motorcycle/racing theme, modern React patterns, and performance-focused architecture.
+
+For any cursor-based 3D card tilt effect, always use:
+tiltX = -(mouse.y - 0.5) * factor (invert Y for natural up/down tilt)
+tiltY = (mouse.x - 0.5) * factor (left/right as is)
