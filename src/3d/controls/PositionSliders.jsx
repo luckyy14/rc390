@@ -1,4 +1,4 @@
-import '../../BikeCardControls.css';
+import '../../ui/BikeCardControls.css';
 
 export default function PositionSliders({ position, setPosition }) {
   return (
@@ -21,4 +21,4 @@ export default function PositionSliders({ position, setPosition }) {
       ))}
     </div>
   );
-} 
+}

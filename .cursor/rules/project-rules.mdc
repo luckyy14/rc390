@@ -1,0 +1,225 @@
+---
+alwaysApply: false
+---
+RC390 Codebase Rules & Conventions
+1. Package Management
+Always use Yarn for installing, updating, and managing dependencies.
+Example commands:
+yarn install
+yarn add <package>
+yarn remove <package>
+Do not use npm or other package managers.
+
+2. Folder Structure
+Project Root:
+rc390/
+│
+├── api/                    # (Backend or API-related code, if any)
+├── public/                 # Static public assets (served as-is)
+│   └── assets/             # Audio, 3D models, PDFs, images
+├── src/                    # All source code
+│   ├── assets/             # Images, icons, and static assets for components
+│   ├── components/         # (If present) Shared React components
+│   ├── hooks/              # Custom React hooks
+│   ├── layouts/            # Layout and provider components (Theme, ErrorBoundary, etc.)
+│   ├── manual/             # (If present) Manual or documentation-related code
+│   ├── modules/            # Feature-specific modules (e.g., 3D/Three.js logic)
+│   ├── pages/              # Page-level React components (for routing)
+│   ├── services/           # API calls and service logic
+│   ├── theme/              # Theming, CSS variables, Tailwind config, and design system
+│   │   ├── constants/      # CSS variable definitions
+│   ├── ui/                 # Reusable UI components (Navbar, buttons, cards, etc.)
+│   │   ├── audio/          # Audio-related UI components
+│   │   └── controls/       # UI controls (e.g., camera sliders)
+│   ├── utils/              # Utility/helper functions
+│   ├── 3d/                 # 3D models, controls, and related files
+│   ├── App.jsx             # Main App component
+│   ├── main.jsx            # Entry point
+│   └── index.css           # Global styles
+│
+├── package.json            # Project metadata and dependencies
+├── yarn.lock               # Yarn lockfile (do not delete)
+├── tailwind.config.js      # Tailwind CSS configuration
+├── postcss.config.js       # PostCSS configuration
+├── vite.config.js          # Vite build configuration
+├── eslint.config.js        # ESLint configuration
+├── README.md               # Project overview
+└── index.html              # Main HTML file
+
+3. Additional Structure & Usage Notes
+All new dependencies must be added with Yarn.
+Do not modify or delete yarn.lock.
+Static assets (audio, 3D models, PDFs) go in public/assets/.
+Component-specific assets go in src/assets/.
+3D-related code is organized under src/3d/ and src/modules/.
+Theming is managed via CSS variables in src/theme/constants/variables.css and Tailwind config.
+Each major directory (hooks, layouts, modules, pages, services, theme, ui, utils) should have a README.md describing its purpose and usage.
+
+
+
+1. Project Structure & Organization
+Directory Structure:
+src/pages/ - Page components for routing
+src/ui/ - Reusable UI components
+src/layouts/ - Layout components and providers
+src/hooks/ - Custom React hooks
+src/modules/ - Feature-specific modules
+src/theme/ - Styling and theme files
+src/assets/ - Static assets (images, icons)
+src/utils/ - Utility functions
+src/services/ - API and external services
+src/3d/ - 3D models and Three.js related files
+File Naming:
+React components: PascalCase (e.g., Home.jsx, ThemeProvider.jsx)
+Hooks: camelCase with use prefix (e.g., usephone.js, useTextScramble.js)
+Utilities: camelCase (e.g., nav-items.jsx)
+CSS files: kebab-case (e.g., bike-theme.css, nfs-navbar.css)
+2. React Component Patterns
+Component Structure:
+import React from "react";
+import { Helmet } from "react-helmet-async";
+// External imports first, then internal imports
+
+export default function ComponentName() {
+  // Hooks at the top
+  // Component logic
+  
+  return (
+    <div className="relative flex flex-col items-center justify-center overflow-hidden bg-[var(--color-bg)]">
+      <Helmet>
+        <title>Page Title | MidnightTorque</title>
+        <meta name="description" content="..." />
+        <meta name="keywords" content="..." />
+        <meta property="og:title" content="..." />
+        <meta property="og:description" content="..." />
+      </Helmet>
+      {/* Component content */}
+    </div>
+  );
+}
+Import Order:
+React and React-related imports
+Third-party libraries
+Internal components (UI, layouts, etc.)
+Hooks
+Assets and static files
+Export Pattern:
+Use export default for main component
+Named exports for utilities and constants
+3. Styling Conventions
+CSS Variables System:
+Use CSS custom properties defined in src/theme/constants/variables.css
+Color palette: --color-primary, --color-surface, --color-accent, etc.
+Typography: --font-hero, --font-h1, --font-body, etc.
+Spacing: --spacing-xs, --spacing-sm, --spacing-md, etc.
+Tailwind + CSS Variables:
+
+Theme Structure:
+Global styles in src/index.css
+Component-specific styles in dedicated CSS files
+Theme variables in src/theme/constants/variables.css
+Responsive breakpoints defined in CSS variables
+className="relative flex flex-col items-center justify-center overflow-hidden bg-[var(--color-bg)]"
+
+
+4. State Management & Hooks
+Custom Hooks Pattern:
+
+Context Providers:
+Wrap providers in src/main.jsx in this order:
+HelmetProvider
+ErrorBoundary
+QueryProvider
+ThemeProvider
+import { useEffect, useState } from "react";
+
+export default function useCustomHook() {
+  const [state, setState] = useState(initialValue);
+
+  useEffect(() => {
+    // Effect logic
+    return () => {
+      // Cleanup
+    };
+  }, []);
+
+  return { state, setState };
+}
+
+
+5. Routing & Navigation
+Routing Structure:
+Use React Router DOM with BrowserRouter
+Pages in src/pages/ directory
+Navigation items defined in src/ui/nav-items.jsx
+Navigation Items Pattern:
+export const NAV_ITEMS = [
+  {
+    label: "Page Name",
+    to: "/route",
+    iconSmall: <svg>...</svg>,
+    iconLarge: <svg>...</svg>,
+  },
+];
+
+
+6. Error Handling
+Error Boundary:
+Class-based component in src/layouts/ErrorBoundary.jsx
+Analytics integration with window.gtag
+Graceful error display with styling
+7. Performance & Optimization
+Asset Management:
+Static assets in public/assets/
+Component assets in src/assets/
+3D models in public/assets/ and src/3d/
+Code Splitting:
+Page-level components for route-based splitting
+Lazy loading for heavy components
+8. Accessibility & SEO
+SEO Requirements:
+Every page must have <Helmet> with:
+Title format: "Page Name | MidnightTorque"
+Meta description
+Keywords
+Open Graph properties
+Accessibility:
+Use semantic HTML elements
+Include aria-hidden="true" for decorative elements
+Proper alt text for images
+9. Development Standards
+ESLint Configuration:
+Use ES2020+ features
+React Hooks rules enforced
+Custom rule: 'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }]
+File Extensions:
+React components: .jsx
+JavaScript utilities: .js
+Stylesheets: .css
+10. Build & Deployment
+Vite Configuration:
+React plugin enabled
+ES modules ("type": "module" in package.json)
+Dependencies:
+React 19.1.0+
+Three.js and React Three Fiber for 3D
+Tailwind CSS for styling
+React Router DOM for routing
+GSAP for animations
+11. Naming Conventions
+Variables & Functions:
+camelCase for variables and functions
+PascalCase for React components
+UPPER_SNAKE_CASE for constants
+CSS Classes:
+Use Tailwind utility classes
+Custom CSS classes in kebab-case
+CSS variables with -- prefix
+12. Code Organization Best Practices
+Keep components focused and single-responsibility
+Extract reusable logic into custom hooks
+Use CSS variables for consistent theming
+Maintain clean import organization
+Include comprehensive README files in each directory
+Use TypeScript-style JSDoc comments where helpful
+These rules ensure consistency with the existing KTM RC390 codebase structure, maintaining the motorcycle/racing theme, modern React patterns, and performance-focused architecture.

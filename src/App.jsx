@@ -9,13 +9,12 @@ import Manual from "./pages/Manual";
 import { Navbar } from "./ui/Navbar";
 import TireSkidTrail from "./ui/TireSkidTrail";
 /* import HamburgerMenu from "./ui/HamburgerMenu"; */
-import usePhone from "./hooks/usephone";
 import NFSNavbar from "./ui/NFSNavbar";
+import { ParallaxProvider } from 'react-scroll-parallax';
 
 const App = () => {
-  const { isPhone } = usePhone();
   return (
-    <>
+    <ParallaxProvider>
       <TireSkidTrail />
       <Router>
         <NFSNavbar />
@@ -28,7 +27,7 @@ const App = () => {
           <Route path="/manual" element={<Manual />} />
         </Routes>
       </Router>
-    </>
+    </ParallaxProvider>
   );
 };
 

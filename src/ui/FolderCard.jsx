@@ -1,10 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { useGLBControls } from '../hooks/useGLBControls';
-import CameraSlider from './controlls/camera/CameraSlider';
-import RotationSliders from './controlls/camera/RotationSliders';
-import PositionSliders from './controlls/camera/PositionSliders';
+import { useGLBControls } from '../3d/controls/useGLBControls';
 import './BikeCardControls.css';
 
 export function BikeCard({ modelUrl = null, initialZ = 8 }) {
@@ -12,11 +9,6 @@ export function BikeCard({ modelUrl = null, initialZ = 8 }) {
   const cameraRef = useRef(null);
   const {
     cameraZ,
-    setCameraZ,
-    rotation,
-    setRotation,
-    position,
-    setPosition,
     applyModelTransforms,
   } = useGLBControls({ initialCameraZ: initialZ });
 
@@ -102,9 +94,7 @@ export function BikeCard({ modelUrl = null, initialZ = 8 }) {
   return (
     <div className="bikecard-root">
       <div ref={mountRef} className="bikecard-canvas" />
-      <CameraSlider cameraZ={cameraZ} setCameraZ={setCameraZ} />
-      <RotationSliders rotation={rotation} setRotation={setRotation} />
-      <PositionSliders position={position} setPosition={setPosition} />
+      {/* Removed CameraSlider, RotationSliders, and PositionSliders controls */}
     </div>
   );
-} 
+}

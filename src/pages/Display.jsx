@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { Rc390Viewer } from "../modules/rc390";
+import { Rc390Viewer } from "../3d/models/rc390";
 import PageLayout from "../layouts/PageLayout";
 
 // Safari/legacy browser compatibility helpers
