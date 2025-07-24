@@ -1,6 +1,17 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useSpring, animated, to } from '@react-spring/web';
 
+/**
+ * ParallaxCard component
+ * @param {Array} layers - Array of layer objects: { src, speed, centerYOffset, zIndex }
+ * @param {string} title - Card title
+ * @param {boolean} zoomOnScroll - Enable zoom on scroll
+ * @param {function} onZoomed - Callback when zoomed
+ * @param {number} width - Card width
+ * @param {number} height - Card height
+ * @param {object} style - Additional styles
+ * @param {number} parallaxStrength - Multiplier for parallax effect (default 0.5)
+ */
 export default function ParallaxCard({
   layers = [],
   title = '',
@@ -9,6 +20,7 @@ export default function ParallaxCard({
   width = 350,
   height = 400,
   style = {},
+  parallaxStrength = 0.5,
 }) {
   const cardRef = useRef();
   const [mouse, setMouse] = useState({ x: 0.5, y: 0.5 });
@@ -115,12 +127,12 @@ export default function ParallaxCard({
             objectFit: 'cover',
             position: 'absolute',
             left: '50%',
-            top: '50%',
+            top: `calc(50% + ${(layer.centerYOffset || 0)}px)`,
             zIndex: layer.zIndex || i + 1,
             pointerEvents: 'none',
             userSelect: 'none',
             transform: to([y, x], (ry, rx) =>
-              `translate(-50%, -50%) translate3d(${ry * (layer.speed || 0)}px, ${rx * (layer.speed || 0)}px, 0)`
+              `translate(-50%, -50%) translate3d(${ry * (layer.speed || 0) * parallaxStrength}px, ${rx * (layer.speed || 0) * parallaxStrength}px, 0)`
             ),
           }}
           draggable={false}
