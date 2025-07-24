@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 
-const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=<>?";
+const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 function randomChar() {
   return CHARS[Math.floor(Math.random() * CHARS.length)];
 }
 
-export function useTextScramble(target, trigger, { speed = 30, stepDelay = 80 } = {}) {
+export function useTextScramble(target, trigger, { speed = 50, stepDelay = 80 } = {}) {
   const [display, setDisplay] = useState(target);
-  const intervalRef = useRef();
+  const rafRef = useRef();
   const timeoutRef = useRef();
 
   useEffect(() => {
@@ -18,32 +18,45 @@ export function useTextScramble(target, trigger, { speed = 30, stepDelay = 80 } 
     }
     let revealed = 0;
     let current = Array.from(target).map(() => "");
+    let scrambleCount = 0;
+    let running = true;
+    const len = target.length;
 
     function revealNext() {
-      if (revealed >= target.length) {
+      if (!running) return;
+      if (revealed >= len) {
         setDisplay(target);
         return;
       }
-      let scrambleCount = 0;
-      clearInterval(intervalRef.current);
-      intervalRef.current = setInterval(() => {
+      scrambleCount = 0;
+      function scrambleFrame() {
+        if (!running) return;
         scrambleCount++;
-        for (let i = revealed; i < target.length; i++) {
-          current[i] = randomChar();
+        for (let i = revealed; i < len; i++) {
+          // Skip scrambling every 2nd letter except first and last
+          if (i !== 0 && i !== len - 1 && i % 2 === 1) {
+            current[i] = target[i];
+          } else {
+            current[i] = randomChar();
+          }
         }
-        setDisplay(current.join(""));
-        if (scrambleCount > 4) { // scramble a few times before revealing
-          clearInterval(intervalRef.current);
+        const scrambled = current.join("");
+        setDisplay(prev => (prev !== scrambled ? scrambled : prev));
+        if (scrambleCount > 4) {
           current[revealed] = target[revealed];
           setDisplay(current.join(""));
           revealed++;
           timeoutRef.current = setTimeout(revealNext, stepDelay);
+        } else {
+          rafRef.current = requestAnimationFrame(scrambleFrame);
         }
-      }, speed);
+      }
+      scrambleFrame();
     }
     revealNext();
     return () => {
-      clearInterval(intervalRef.current);
+      running = false;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       clearTimeout(timeoutRef.current);
       setDisplay(target);
     };

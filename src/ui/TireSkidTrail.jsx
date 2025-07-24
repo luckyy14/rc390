@@ -2,9 +2,20 @@ import React, { useEffect } from "react";
 
 const SKID_IMAGE = "/icons/skid_mark.png"; // Add this PNG to your public/icons/
 
+function throttle(fn, limit) {
+  let inThrottle;
+  return function (...args) {
+    if (!inThrottle) {
+      fn.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
+}
+
 const TireSkidTrail = () => {
   useEffect(() => {
-    const handleMove = (e) => {
+    const handleMove = throttle((e) => {
       const mark = document.createElement("img");
       mark.src = SKID_IMAGE;
       mark.style.position = "fixed";
@@ -21,7 +32,7 @@ const TireSkidTrail = () => {
         mark.style.opacity = "0";
         setTimeout(() => mark.remove(), 700);
       }, 10);
-    };
+    }, 30); // Throttle to 1 mark per 30ms
     window.addEventListener("mousemove", handleMove);
     return () => window.removeEventListener("mousemove", handleMove);
   }, []);

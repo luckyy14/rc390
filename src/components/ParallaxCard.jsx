@@ -54,21 +54,27 @@ export default function ParallaxCard({
     config: { mass: 2, tension: 300, friction: 30 },
   }));
 
+  // Throttled global mouse tracking using requestAnimationFrame
   useEffect(() => {
+    let frame = null;
     function handleGlobalMouseMove(e) {
       if (!cardRef.current) return;
-      const rect = cardRef.current.getBoundingClientRect();
-      // Mouse position relative to card center (0.5, 0.5 is center)
-      let x = (e.clientX - rect.left) / rect.width;
-      let y = (e.clientY - rect.top) / rect.height;
-      // Clamp x and y to [0, 1]
-      x = Math.max(0, Math.min(1, x));
-      y = Math.max(0, Math.min(1, y));
-      setMouse({ x, y });
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const rect = cardRef.current.getBoundingClientRect();
+        // Mouse position relative to card center (0.5, 0.5 is center)
+        let x = (e.clientX - rect.left) / rect.width;
+        let y = (e.clientY - rect.top) / rect.height;
+        // Clamp x and y to [0, 1]
+        x = Math.max(0, Math.min(1, x));
+        y = Math.max(0, Math.min(1, y));
+        setMouse((prev) => (prev.x !== x || prev.y !== y ? { x, y } : prev));
+      });
     }
     window.addEventListener('mousemove', handleGlobalMouseMove);
     return () => {
       window.removeEventListener('mousemove', handleGlobalMouseMove);
+      if (frame) cancelAnimationFrame(frame);
     };
   }, []);
 
@@ -116,28 +122,35 @@ export default function ParallaxCard({
         zIndex: isZoomed ? 10 : 1,
       }}
     >
-      {layers.map((layer, i) => (
-        <animated.img
-          key={i}
-          src={layer.src}
-          alt={layer.alt || ''}
-          style={{
-            width: '150%',
-            height: '150%',
-            objectFit: 'cover',
-            position: 'absolute',
-            left: '50%',
-            top: `calc(50% + ${(layer.centerYOffset || 0)}px)`,
-            zIndex: layer.zIndex || i + 1,
-            pointerEvents: 'none',
-            userSelect: 'none',
-            transform: to([y, x], (ry, rx) =>
-              `translate(-50%, -50%) translate3d(${ry * (layer.speed || 0) * parallaxStrength}px, ${rx * (layer.speed || 0) * parallaxStrength}px, 0)`
-            ),
-          }}
-          draggable={false}
-        />
-      ))}
+      {layers.map((layer, i) => {
+        const speed = (layer.speed || 0) * parallaxStrength;
+        // If speed is 0, skip extra translation for performance
+        const animatedTransform = speed
+          ? to([y, x], (ry, rx) =>
+              `translate(-50%, -50%) translate3d(${ry * speed}px, ${rx * speed}px, 0)`
+            )
+          : 'translate(-50%, -50%)';
+        return (
+          <animated.img
+            key={i}
+            src={layer.src}
+            alt={layer.alt || ''}
+            style={{
+              width: '150%',
+              height: '150%',
+              objectFit: 'cover',
+              position: 'absolute',
+              left: '50%',
+              top: `calc(50% + ${(layer.centerYOffset || 0)}px)`,
+              zIndex: layer.zIndex || i + 1,
+              pointerEvents: 'none',
+              userSelect: 'none',
+              transform: animatedTransform,
+            }}
+            draggable={false}
+          />
+        );
+      })}
       {title && (
         <div className="absolute bottom-4 left-0 w-full text-center text-white text-xl font-bold drop-shadow-lg z-20 select-none pointer-events-none">
           {title}

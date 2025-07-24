@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./nfs-navbar.css";
 
@@ -11,6 +11,37 @@ const nfsnavitems = NAV_ITEMS.map(item => ({
 }));
 
 import { useTextScramble } from "../hooks/useTextScramble";
+
+const NFSNavItemWithScramble = React.memo(function NFSNavItemWithScramble({ opt, idx, selected, handleSelect, userInteracted, getTransform }) {
+  const [hovered, setHovered] = React.useState(false);
+  const scrambled = useTextScramble(opt.label, hovered);
+  return (
+    <div
+      className={`menu-option menu-3d-item${idx === selected ? " selected" : ""}`}
+      key={opt.label}
+      tabIndex={0}
+      data-idx={idx}
+      style={getTransform(idx)}
+      onClick={() => {
+        userInteracted.current = true;
+        handleSelect(idx);
+      }}
+      onKeyDown={useCallback((e) => {
+        if ((e.key === " " || e.key === "Enter")) {
+          userInteracted.current = true;
+          handleSelect(idx);
+          e.preventDefault();
+        }
+      }, [handleSelect, idx, userInteracted])}
+      onPointerEnter={useCallback(() => setHovered(true), [])}
+      onPointerLeave={useCallback(() => setHovered(false), [])}
+    >
+      {opt.icon}
+      <span>{scrambled}</span>
+      {idx === selected && <div className="reticle" />}
+    </div>
+  );
+});
 
 export default function NFSNavbar() {
   const [selected, setSelected] = useState(0);
@@ -29,17 +60,17 @@ export default function NFSNavbar() {
   const userInteracted = useRef(false);
 
   // Play tick sound, speed up if fast
-  const playTick = (rate = 1) => {
+  const playTick = useCallback((rate = 1) => {
     if (!userInteracted.current) return;
     // Use a new Audio instance for each tick to allow overlap
     const tick = new window.Audio("/assets/audio/tick.mp3");
     tick.playbackRate = rate;
     tick.volume = 1;
     tick.play().catch(() => {});
-  };
+  }, [userInteracted]);
 
   // Inertia animation
-  const animateInertia = (vel) => {
+  const animateInertia = useCallback((vel) => {
     if (inertiaActive.current) return;
     inertiaActive.current = true;
     let v = vel;
@@ -69,7 +100,7 @@ export default function NFSNavbar() {
       animationRef.current = requestAnimationFrame(step);
     };
     step();
-  };
+  }, [selected, len, playTick]);
 
   // Keyboard navigation (circular, no scroll on up/down)
   React.useEffect(() => {
@@ -98,14 +129,14 @@ export default function NFSNavbar() {
   }, [navigate, len]);
 
   // Simulate selection (replace with navigation as needed)
-  const handleSelect = (idx) => {
+  const handleSelect = useCallback((idx) => {
     setSelected(idx);
     playTick(1);
     navigate(nfsnavitems[idx].path);
-  };
+  }, [navigate, playTick]);
 
   // Render all items in a row, with 3D effect only for selected and neighbors
-  const getTransform = (idx) => {
+  const getTransform = useCallback((idx) => {
     const len = nfsnavitems.length;
     let rel = idx - selected;
     if (rel > len / 2) rel -= len;
@@ -146,11 +177,11 @@ export default function NFSNavbar() {
       filter: "grayscale(80%) blur(0.5px)",
       transition: "transform 0.4s cubic-bezier(.4,2,.6,1), opacity 0.3s, filter 0.3s",
     };
-  };
+  }, [selected]);
 
   React.useEffect(() => {
     // Debug: log when navbar renders
-    console.log("NFSNavbar rendered, selected:", selected);
+    // console.log("NFSNavbar rendered, selected:", selected);
   }, [selected]);
 
   return (
@@ -276,36 +307,5 @@ export default function NFSNavbar() {
         ))}
       </div>
     </nav>
-  );
-}
-
-function NFSNavItemWithScramble({ opt, idx, selected, handleSelect, userInteracted, getTransform }) {
-  const [hovered, setHovered] = React.useState(false);
-  const scrambled = useTextScramble(opt.label, hovered);
-  return (
-    <div
-      className={`menu-option menu-3d-item${idx === selected ? " selected" : ""}`}
-      key={opt.label}
-      tabIndex={0}
-      data-idx={idx}
-      style={getTransform(idx)}
-      onClick={() => {
-        userInteracted.current = true;
-        handleSelect(idx);
-      }}
-      onKeyDown={(e) => {
-        if ((e.key === " " || e.key === "Enter")) {
-          userInteracted.current = true;
-          handleSelect(idx);
-          e.preventDefault();
-        }
-      }}
-      onPointerEnter={() => setHovered(true)}
-      onPointerLeave={() => setHovered(false)}
-    >
-      {opt.icon}
-      <span>{scrambled}</span>
-      {idx === selected && <div className="reticle" />}
-    </div>
   );
 }
