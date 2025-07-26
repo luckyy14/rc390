@@ -48,12 +48,11 @@ const { scene: originalScene } = useGLTF("/src/3d/glb/ktm.glb");
  * BikeController - Handles keyboard controls and inverse kinematics for the bike
  */
 function BikeController({ scene }) {
-  const [bikePosition, setBikePosition] = useState({ x: 0, z: 0 });
+  const [, setBikePosition] = useState({ x: 0, z: 0 }); // Keep for UI consistency
   const bikeBasisRef = useRef(null);
   const wheelAxisControlRef = useRef(null);
   const steeringControlRef = useRef(null);
   const keysPressed = useRef(new Set());
-  const previousBikeMatrix = useRef(null);
   const accumulatedWheelX = useRef(0);
   const isInitialized = useRef(false);
   const startTime = useRef(Date.now());
@@ -177,98 +176,62 @@ function BikeController({ scene }) {
       return; // Exit early if no movement
     }
 
-    // Store previous matrix for delta calculation
-    const currentMatrix = bikeBasisRef.current.matrixWorld.clone();
+    // No matrix calculations needed for simple movement
     
-    // Update X position (front/back) - matches Blender X
+    // Simple movement logic - maintain position when keys released
     if (hasW) {
-      setBikePosition(prev => ({ ...prev, x: Math.min(prev.x + moveSpeed, maxDistance) }));
+      bikeBasisRef.current.position.x += moveSpeed;
+      if (bikeBasisRef.current.position.x > maxDistance) {
+        bikeBasisRef.current.position.x = maxDistance;
+      }
     } else if (hasS) {
-      setBikePosition(prev => ({ ...prev, x: Math.max(prev.x - moveSpeed, -maxDistance) }));
-    } else {
-      // Return X to center when no W/S keys are pressed
-      setBikePosition(prev => ({
-        ...prev,
-        x: Math.abs(prev.x) < moveSpeed ? 0 : prev.x > 0 ? prev.x - moveSpeed : prev.x + moveSpeed
-      }));
+      bikeBasisRef.current.position.x -= moveSpeed;
+      if (bikeBasisRef.current.position.x < -maxDistance) {
+        bikeBasisRef.current.position.x = -maxDistance;
+      }
     }
+    // No auto-return to center - maintain position when W/S released
 
-    // Update Z position (side movement) - only when moving forward/backward
+    // Side movement only when moving forward/backward
     if ((hasW || hasS) && (hasA || hasD)) {
       if (hasA) {
-        setBikePosition(prev => ({ ...prev, z: Math.max(prev.z - moveSpeed, -maxDistance) }));
+        bikeBasisRef.current.position.z -= moveSpeed;
+        if (bikeBasisRef.current.position.z < -maxDistance) {
+          bikeBasisRef.current.position.z = -maxDistance;
+        }
       } else if (hasD) {
-        setBikePosition(prev => ({ ...prev, z: Math.min(prev.z + moveSpeed, maxDistance) }));
-      }
-    } else {
-      // Return Z to center when not moving forward/backward or no A/D keys
-      setBikePosition(prev => ({
-        ...prev,
-        z: Math.abs(prev.z) < moveSpeed ? 0 : prev.z > 0 ? prev.z - moveSpeed : prev.z + moveSpeed
-      }));
-    }
-
-    // Apply position to the Bike_Basis_ with correct axis mapping
-    bikeBasisRef.current.position.x = bikePosition.x;  // Our X = Blender X
-    bikeBasisRef.current.position.z = bikePosition.z;  // Our Z = Blender Y (side movement)
-
-    // Calculate inverse kinematics if we have previous matrix
-    if (previousBikeMatrix.current && wheelAxisControlRef.current && steeringControlRef.current) {
-      // Calculate delta transformation
-      const deltaMatrix = previousBikeMatrix.current.clone().invert().multiply(currentMatrix);
-      
-      // Extract delta location and rotation with correct axis mapping
-      const deltaLocation = new THREE.Vector3();
-      deltaMatrix.decompose(deltaLocation, new THREE.Quaternion(), new THREE.Vector3());
-      
-      const deltaForwardDistance = deltaLocation.x;  // Our X = Blender X
-
-      // Update wheel rotation
-      accumulatedWheelX.current += deltaForwardDistance;
-      if (wheelAxisControlRef.current) {
-        wheelAxisControlRef.current.position.x = accumulatedWheelX.current;
-      }
-
-      // Calculate steering angle only when A or D keys are pressed
-      let steeringAngleRadians = 0.0;
-      
-      if (hasA || hasD) {
-        // Direct steering control based on A/D keys
-        if (hasA) {
-          steeringAngleRadians = MAX_STEERING_ANGLE_DEGREES * Math.PI / 180; // Turn left
-        } else if (hasD) {
-          steeringAngleRadians = -MAX_STEERING_ANGLE_DEGREES * Math.PI / 180; // Turn right
+        bikeBasisRef.current.position.z += moveSpeed;
+        if (bikeBasisRef.current.position.z > maxDistance) {
+          bikeBasisRef.current.position.z = maxDistance;
         }
-        
-        // Apply steering sensitivity and direction multiplier
-        steeringAngleRadians *= STEERING_SENSITIVITY * STEERING_DIRECTION_MULTIPLIER;
-        
-        // Clamp steering angle
-        const maxSteeringRadians = MAX_STEERING_ANGLE_DEGREES * Math.PI / 180;
-        steeringAngleRadians = Math.max(-maxSteeringRadians, Math.min(maxSteeringRadians, steeringAngleRadians));
+      }
+    }
+    // No auto-return to center for side movement - maintain position when A/D released
+
+    // Update state for UI consistency
+    setBikePosition({ 
+      x: bikeBasisRef.current.position.x, 
+      z: bikeBasisRef.current.position.z 
+    });
+
+    // Simple steering control without inverse kinematics
+    if (steeringControlRef.current) {
+      if (hasA) {
+        steeringControlRef.current.rotation.y = MAX_STEERING_ANGLE_DEGREES * Math.PI / 180;
+      } else if (hasD) {
+        steeringControlRef.current.rotation.y = -MAX_STEERING_ANGLE_DEGREES * Math.PI / 180;
       } else {
-        // Return steering to center when no A/D keys are pressed
-        if (steeringControlRef.current) {
-          const currentSteering = steeringControlRef.current.rotation.y;
-          const steeringReturnSpeed = 0.05;
-          if (Math.abs(currentSteering) < steeringReturnSpeed) {
-            steeringControlRef.current.rotation.y = 0;
-          } else {
-            steeringControlRef.current.rotation.y = currentSteering > 0 ? 
-              currentSteering - steeringReturnSpeed : currentSteering + steeringReturnSpeed;
-          }
+        // Return steering to center
+        const currentSteering = steeringControlRef.current.rotation.y;
+        const steeringReturnSpeed = 0.05;
+        if (Math.abs(currentSteering) < steeringReturnSpeed) {
+          steeringControlRef.current.rotation.y = 0;
+        } else {
+          steeringControlRef.current.rotation.y = currentSteering > 0 ? 
+            currentSteering - steeringReturnSpeed : currentSteering + steeringReturnSpeed;
         }
-        return; // Skip steering application
-      }
-
-      // Apply steering to the control object with correct axis mapping
-      if (steeringControlRef.current) {
-        steeringControlRef.current.rotation.y = steeringAngleRadians;  // Our Y = Blender Z (steering)
       }
     }
-
-    // Store current matrix for next frame
-    previousBikeMatrix.current = currentMatrix.clone();
   });
 
   return null;
