@@ -180,12 +180,12 @@ function BikeController({ scene }) {
     
     // Simple movement logic - maintain position when keys released
     if (hasW) {
-      bikeBasisRef.current.position.x += moveSpeed;
+      bikeBasisRef.current.position.x += moveSpeed * 2; // Double speed for forward/backward
       if (bikeBasisRef.current.position.x > maxDistance) {
         bikeBasisRef.current.position.x = maxDistance;
       }
     } else if (hasS) {
-      bikeBasisRef.current.position.x -= moveSpeed;
+      bikeBasisRef.current.position.x -= moveSpeed * 2; // Double speed for forward/backward
       if (bikeBasisRef.current.position.x < -maxDistance) {
         bikeBasisRef.current.position.x = -maxDistance;
       }
@@ -214,22 +214,15 @@ function BikeController({ scene }) {
       z: bikeBasisRef.current.position.z 
     });
 
-    // Simple steering control without inverse kinematics
+    // Simple steering control - always reset when A/D not pressed
     if (steeringControlRef.current) {
       if (hasA) {
         steeringControlRef.current.rotation.y = MAX_STEERING_ANGLE_DEGREES * Math.PI / 180;
       } else if (hasD) {
         steeringControlRef.current.rotation.y = -MAX_STEERING_ANGLE_DEGREES * Math.PI / 180;
       } else {
-        // Return steering to center
-        const currentSteering = steeringControlRef.current.rotation.y;
-        const steeringReturnSpeed = 0.05;
-        if (Math.abs(currentSteering) < steeringReturnSpeed) {
-          steeringControlRef.current.rotation.y = 0;
-        } else {
-          steeringControlRef.current.rotation.y = currentSteering > 0 ? 
-            currentSteering - steeringReturnSpeed : currentSteering + steeringReturnSpeed;
-        }
+        // Always reset steering to center when neither A nor D is pressed
+        steeringControlRef.current.rotation.y = 0;
       }
     }
   });
@@ -386,7 +379,7 @@ export function Rc390Viewer({
           </div>
           <div className="flex items-center gap-2">
             <kbd className="px-2 py-1 bg-[#333] rounded text-xs font-mono">R</kbd>
-            <span>Reset to Center</span>
+            <span>Reset All (Position + Steering)</span>
           </div>
         </div>
       </div>
