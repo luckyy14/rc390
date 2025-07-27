@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useSpring, to } from '@react-spring/web';
 import { Rc390Viewer } from '../3d/models/rc390';
 import { animated } from '@react-spring/web';
+
 /**
  * ParallaxCard component
  * @param {Array} layers - Array of layer objects: { src, speed, centerYOffset, zIndex }
@@ -25,38 +26,17 @@ export default function ParallaxCard({
 }) {
   const cardRef = useRef();
   const [mouse, setMouse] = useState({ x: 0.5, y: 0.5 });
-  const [isZoomed, setIsZoomed] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const zoomTimeout = useRef(null);
+  const [scrollProgress, setScrollProgress] = useState(0); // 0 to 1
 
-  // Scroll-to-zoom logic: only zoom when hovered and zoomOnScroll is enabled
-  useEffect(() => {
-    if (!zoomOnScroll || !isHovered) return;
-    function onScrollOrWheel() {
-      setIsZoomed(true);
-      onZoomed();
-      if (zoomTimeout.current) clearTimeout(zoomTimeout.current);
-      zoomTimeout.current = setTimeout(() => setIsZoomed(false), 400);
-    }
-    window.addEventListener('scroll', onScrollOrWheel, { passive: true });
-    window.addEventListener('wheel', onScrollOrWheel, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', onScrollOrWheel);
-      window.removeEventListener('wheel', onScrollOrWheel);
-      if (zoomTimeout.current) clearTimeout(zoomTimeout.current);
-    };
-  }, [zoomOnScroll, isHovered, onZoomed]);
-
-  // Spring for tilt and zoom
-  const [{ x, y, scale, borderRadius }, api] = useSpring(() => ({
+  // Only tilt, never zoom, with mouse movement
+  const [{ x, y }, api] = useSpring(() => ({
     x: 0,
     y: 0,
-    scale: 1,
-    borderRadius: 24,
     config: { mass: 2, tension: 300, friction: 30 },
   }));
 
-  // Throttled global mouse tracking using requestAnimationFrame
+  // Mouse move for tilt only
   useEffect(() => {
     let frame = null;
     function handleGlobalMouseMove(e) {
@@ -64,10 +44,8 @@ export default function ParallaxCard({
       if (frame) cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const rect = cardRef.current.getBoundingClientRect();
-        // Mouse position relative to card center (0.5, 0.5 is center)
         let x = (e.clientX - rect.left) / rect.width;
         let y = (e.clientY - rect.top) / rect.height;
-        // Clamp x and y to [0, 1]
         x = Math.max(0, Math.min(1, x));
         y = Math.max(0, Math.min(1, y));
         setMouse((prev) => (prev.x !== x || prev.y !== y ? { x, y } : prev));
@@ -80,58 +58,146 @@ export default function ParallaxCard({
     };
   }, []);
 
-  // Calculate tilt multiplier based on hover and distance from card center
+  // Tilt effect only
   function getTiltMultiplier(mouse) {
-    // Calculate distance from card center (0.5, 0.5)
     const dx = mouse.x - 0.5;
     const dy = mouse.y - 0.5;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    // Exponential decay: multiplier = 18 * exp(-2.5 * dist)
     return 28 * Math.exp(-2.2 * dist);
   }
 
   useEffect(() => {
-    // Mouse tilt: -1 to 1, with dynamic multiplier
+    // Disable tilt when zoomed in >80%
+    console.log('scrollProgress', scrollProgress);
+    if (scrollProgress > 0.5) {
+      api.start({ x: 0, y: 0, immediate: true });
+      return;
+    }
     const multiplier = getTiltMultiplier(mouse);
     const tiltX = -(mouse.y - 0.5) * multiplier;
     const tiltY = (mouse.x - 0.5) * multiplier;
     api.start({
       x: tiltX,
       y: tiltY,
-      scale: isZoomed ? 1.2 : 1,
-      borderRadius: isZoomed ? 0 : 24,
+      immediate: false
     });
-  }, [mouse, isZoomed, api
-  ]);
+  }, [mouse, api, scrollProgress]);
+
+  // Scroll to zoom only (no mouse effect)
+  useEffect(() => {
+    if (!zoomOnScroll) return;
+    function onWheel(e) {
+      setScrollProgress(prev => {
+        let next = prev + e.deltaY * 0.002;
+        next = Math.max(0, Math.min(1, next));
+        return next;
+      });
+      if (scrollProgress > 0.8) onZoomed();
+    }
+    window.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      window.removeEventListener('wheel', onWheel);
+    };
+  }, [zoomOnScroll, onZoomed, scrollProgress]);
+
+  // Calculate position interpolation for fullscreen transition
+  const [originRect, setOriginRect] = useState(null);
+
+  useEffect(() => {
+    if (isHovered && cardRef.current && scrollProgress > 0 && !originRect) {
+      setOriginRect(cardRef.current.getBoundingClientRect());
+    }
+    if (!isHovered || scrollProgress === 0) {
+      setOriginRect(null);
+    }
+  }, [isHovered, scrollProgress]);
+
+  // Store current size for tilt reference
+  const [currentSize, setCurrentSize] = useState({ width, height });
+
+  useEffect(() => {
+    // Update current size on zoom
+    if (cardRef.current) {
+      const rect = cardRef.current.getBoundingClientRect();
+      setCurrentSize({ width: rect.width, height: rect.height });
+    }
+  }, [scrollProgress]);
+
+  // Interpolate position and size for zoom
+  let animatedStyle = {};
+  if (scrollProgress > 0) {
+    const rect = cardRef.current ? cardRef.current.getBoundingClientRect() : { left: 0, top: 0, width, height };
+    const originCenterX = rect.left + rect.width / 2;
+    const originCenterY = rect.top + rect.height / 2;
+    const targetCenterX = window.innerWidth / 2;
+    const targetCenterY = window.innerHeight / 2;
+
+    const centerX = originCenterX + (targetCenterX - originCenterX) * scrollProgress;
+    const centerY = originCenterY + (targetCenterY - originCenterY) * scrollProgress;
+
+    const widthVal = rect.width + (window.innerWidth - rect.width) * scrollProgress;
+    const heightVal = rect.height + (window.innerHeight - rect.height) * scrollProgress;
+
+    const left = centerX - widthVal / 2;
+    const top = centerY - heightVal / 2;
+
+    animatedStyle = {
+      position: "fixed",
+      left: `calc(50vw - ${widthVal / 2}px)`,
+      top: `calc(50vh - ${heightVal / 2}px)`,
+      width: widthVal,
+      height: heightVal,
+      borderRadius: scrollProgress > 0.8 ? 0 : 24,
+      boxShadow: '0 8px 32px 0 rgba(31,38,135,0.37), 0 1.5px 8px 0 rgba(0,0,0,0.18)',
+      background: '#18181b',
+      cursor: 'pointer',
+      touchAction: 'none',
+      ...style,
+      transform: to([x, y], (rx, ry) =>
+        `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`
+      ),
+      transition: `box-shadow 0.2s, left 0.3s cubic-bezier(0.4,0,0.2,1), top 0.3s cubic-bezier(0.4,0,0.2,1), width 0.5s cubic-bezier(0.4,0,0.2,1), height 0.5s cubic-bezier(0.4,0,0.2,1)`,
+      zIndex: 30,
+    };
+  } else {
+    animatedStyle = {
+      width: currentSize.width,
+      height: currentSize.height,
+      borderRadius: 24,
+      boxShadow: '0 8px 32px 0 rgba(31,38,135,0.37), 0 1.5px 8px 0 rgba(0,0,0,0.18)',
+      background: '#18181b',
+      cursor: 'pointer',
+      touchAction: 'none',
+      ...style,
+      transform: to([x, y], (rx, ry) =>
+        `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`
+      ),
+      transition: 'box-shadow 0.2s',
+      zIndex: scrollProgress > 0.98 ? 20 : 1,
+    };
+  }
 
   return (
     <animated.div
       ref={cardRef}
-      className="parallax-card relative overflow-hidden shadow-lg"
+      className="parallax-card overflow-hidden shadow-lg"
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        setIsZoomed(false);
-      }}
-      style={{
-        width,
-        height,
-        borderRadius,
-        boxShadow: '0 8px 32px 0 rgba(31,38,135,0.37), 0 1.5px 8px 0 rgba(0,0,0,0.18)',
-        background: '#18181b',
-        cursor: 'pointer',
-        touchAction: 'none',
-        ...style,
-        transform: to([x, y, scale], (rx, ry, s) =>
-          `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${s})`
-        ),
-        transition: 'box-shadow 0.2s',
-        zIndex: isZoomed ? 10 : 1,
-      }}
+      onMouseLeave={() => setIsHovered(false)}
+      style={animatedStyle}
     >
       {/* Render 3D layers as background */}
       {layers.filter(layer => layer.type === '3d' && typeof layer.component === 'function').map((layer, i) =>
-        <div key={`3d-${i}`} style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+        <div
+          key={`3d-${i}`}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
           {React.createElement(layer.component, { camera: layer.camera })}
         </div>
       )}

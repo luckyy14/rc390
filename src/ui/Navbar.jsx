@@ -78,6 +78,10 @@ export const Navbar = () => {
         background: "transparent",
         boxShadow: "0 0 80px 10px #ff6600cc, 0 0 0 100vmax rgba(26,26,26,0.85) inset"
       }}
+      onWheel={e => {
+        e.stopPropagation();
+        return false;
+      }}
     >
       <div className="flex items-center gap-3">
         {/* Bouncing tyre SVG logo */}

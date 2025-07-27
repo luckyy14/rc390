@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: radial-gradient(ellipse at center, #232323 60%, #111 100%), url('/public/assets/grunge-bg.jpg');
+  background: transparent;
   background-size: cover;
   padding: 32px 0 16px 0;
   border-bottom: 4px solid #ff6600;

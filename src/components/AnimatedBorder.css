@@ -1,0 +1,57 @@
+.border-top,
+.border-bottom {
+  position: fixed;
+  left: 0;
+  width: 100vw;
+  height: 8px;
+  background: linear-gradient(90deg, #ff6f00 60%, #ff8c1a 100%);
+  z-index: 100;
+  transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.border-top {
+  top: 0;
+  transform-origin: 50% 0%;
+  animation: borderTopIn 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.border-bottom {
+  bottom: 0;
+  transform-origin: 50% 100%;
+  animation: borderBottomIn 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.border-left,
+.border-right {
+  position: fixed;
+  top: 0;
+  width: 8px;
+  height: 100vh;
+  background: linear-gradient(180deg, #ff6f00 60%, #ff8c1a 100%);
+  z-index: 100;
+  transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.border-left {
+  left: 0;
+  transform-origin: 0% 50%;
+  animation: borderLeftIn 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.border-right {
+  right: 0;
+  transform-origin: 100% 50%;
+  animation: borderRightIn 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+@keyframes borderTopIn {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes borderBottomIn {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes borderLeftIn {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes borderRightIn {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}

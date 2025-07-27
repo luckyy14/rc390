@@ -35,9 +35,31 @@ const cards = [
     zoomOnScroll: true,
   }]
 export default function ParallaxCardsContainer() {
+  const containerRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleWheel = (e) => {
+      if (e.ctrlKey || e.metaKey) return; // ignore pinch-zoom
+      // Example: scale all cards on scroll
+      const scale = Math.max(0.5, Math.min(2, 1 + e.deltaY * -0.001));
+      if (containerRef.current) {
+        containerRef.current.style.transform = `scale(${scale})`;
+      }
+    };
+    const ref = containerRef.current;
+    if (ref) {
+      ref.addEventListener("wheel", handleWheel, { passive: false });
+    }
+    return () => {
+      if (ref) {
+        ref.removeEventListener("wheel", handleWheel);
+      }
+    };
+  }, []);
+
   return (
     <ParallaxProvider>
-      <div className="flex flex-row justify-center items-center gap-8 py-16">
+      <div ref={containerRef} className="flex flex-row justify-center items-center gap-8 py-16" style={{ perspective: '1000px', width: '100vw', height: '100vh' }}>
         {cards.map((card, i) => (
           <ParallaxCard
             key={i}
