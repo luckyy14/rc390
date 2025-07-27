@@ -26,25 +26,26 @@ export default function ParallaxCard({
   const cardRef = useRef();
   const [mouse, setMouse] = useState({ x: 0.5, y: 0.5 });
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const zoomTimeout = useRef(null);
 
-  // Scroll-to-zoom logic (center card only)
+  // Scroll-to-zoom logic: only zoom when hovered and zoomOnScroll is enabled
   useEffect(() => {
-    if (!zoomOnScroll) return;
-    const onScroll = () => {
-      if (!cardRef.current) return;
-      const rect = cardRef.current.getBoundingClientRect();
-      const vh = window.innerHeight;
-      // If card is near center of viewport, zoom
-      if (rect.top < vh * 0.25 && rect.bottom > vh * 0.75) {
-        setIsZoomed(true);
-        onZoomed();
-      } else {
-        setIsZoomed(false);
-      }
+    if (!zoomOnScroll || !isHovered) return;
+    function onScrollOrWheel() {
+      setIsZoomed(true);
+      onZoomed();
+      if (zoomTimeout.current) clearTimeout(zoomTimeout.current);
+      zoomTimeout.current = setTimeout(() => setIsZoomed(false), 400);
+    }
+    window.addEventListener('scroll', onScrollOrWheel, { passive: true });
+    window.addEventListener('wheel', onScrollOrWheel, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScrollOrWheel);
+      window.removeEventListener('wheel', onScrollOrWheel);
+      if (zoomTimeout.current) clearTimeout(zoomTimeout.current);
     };
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [zoomOnScroll, onZoomed]);
+  }, [zoomOnScroll, isHovered, onZoomed]);
 
   // Spring for tilt and zoom
   const [{ x, y, scale, borderRadius }, api] = useSpring(() => ({
@@ -97,7 +98,7 @@ export default function ParallaxCard({
     api.start({
       x: tiltX,
       y: tiltY,
-      scale: isZoomed ? 1.15 : 1,
+      scale: isZoomed ? 1.2 : 1,
       borderRadius: isZoomed ? 0 : 24,
     });
   }, [mouse, isZoomed, api
@@ -107,6 +108,11 @@ export default function ParallaxCard({
     <animated.div
       ref={cardRef}
       className="parallax-card relative overflow-hidden shadow-lg"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setIsZoomed(false);
+      }}
       style={{
         width,
         height,
