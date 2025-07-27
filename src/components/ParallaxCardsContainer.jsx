@@ -3,34 +3,37 @@ import { ParallaxProvider } from 'react-scroll-parallax';
 import ParallaxCard from './ParallaxCard';
 import sky1 from '../assets/gifs/sky.png';
 import mountain1 from '../assets/gifs/mountain.png';
+import { Rc390, Rc390Viewer } from '../3d/models/rc390';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+
+// Custom 3D component with OrbitControls for testing
+function Rc390WithControls({ camera }) {
+  return (
+    <Canvas camera={camera} style={{ width: '100%', height: '100%' }}>
+      <ambientLight intensity={2} />
+      <pointLight position={[0, 5, 0]} intensity={2} color="#fff" castShadow />
+      <pointLight position={[5, 5, 5]} intensity={1.5} color="#fff" />
+      <pointLight position={[-5, 5, -5]} intensity={1.5} color="#fff" />
+      <directionalLight position={[2, 5, 2]} intensity={1.2} />
+      {/* Render the RC390 model directly, not Rc390Viewer */}
+      <Rc390 scale={1.4} position={[0, -3, 0]} />
+      {/* OrbitControls disabled for parallax card */}
+      {/* <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} /> */}
+    </Canvas>
+  );
+}
 
 const cards = [
   {
-    title: 'Left Card',
+    title: '',
     layers: [
-      { src: sky1, speed: -10, zIndex: 1, centerYOffset:-50,},
-      { src: mountain1, speed: -15, zIndex: 2,centerYOffset:-50 },
+      { type: '3d', component: Rc390WithControls, speed: 0, zIndex: 10, centerYOffset: -50, camera: { position: [0, 0, 8], fov: 50 } },
+      { src: mountain1, speed: -15, zIndex: -3,centerYOffset:-50 },
+      { src: sky1, speed: -10, zIndex: -4, centerYOffset: -50, opacity: 0.3 },
     ],
-    zoomOnScroll: false,
-  },
-//   {
-//     title: 'Center Card',
-//     layers: [
-//       { src: sky2, speed: -8, zIndex: 1 },
-//       { src: mountain2, speed: -15, zIndex: 2 },
-//     ],
-//     zoomOnScroll: true,
-//   },
-//   {
-//     title: 'Right Card',
-//     layers: [
-//       { src: sky3, speed: -12, zIndex: 1 },
-//       { src: mountain3, speed: -18, zIndex: 2 },
-//     ],
-//     zoomOnScroll: false,
-//   },
-];
-
+    zoomOnScroll: true,
+  }]
 export default function ParallaxCardsContainer() {
   return (
     <ParallaxProvider>
@@ -48,4 +51,4 @@ export default function ParallaxCardsContainer() {
       </div>
     </ParallaxProvider>
   );
-} 
+}

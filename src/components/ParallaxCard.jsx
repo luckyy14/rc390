@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useSpring, animated, to } from '@react-spring/web';
-
+import { useSpring, to } from '@react-spring/web';
+import { Rc390Viewer } from '../3d/models/rc390';
+import { animated } from '@react-spring/web';
 /**
  * ParallaxCard component
  * @param {Array} layers - Array of layer objects: { src, speed, centerYOffset, zIndex }
@@ -122,35 +123,36 @@ export default function ParallaxCard({
         zIndex: isZoomed ? 10 : 1,
       }}
     >
-      {layers.map((layer, i) => {
-        const speed = (layer.speed || 0) * parallaxStrength;
-        // If speed is 0, skip extra translation for performance
-        const animatedTransform = speed
-          ? to([y, x], (ry, rx) =>
-              `translate(-50%, -50%) translate3d(${ry * speed}px, ${rx * speed}px, 0)`
-            )
-          : 'translate(-50%, -50%)';
-        return (
-          <animated.img
-            key={i}
-            src={layer.src}
-            alt={layer.alt || ''}
-            style={{
-              width: '150%',
-              height: '150%',
-              objectFit: 'cover',
-              position: 'absolute',
-              left: '50%',
-              top: `calc(50% + ${(layer.centerYOffset || 0)}px)`,
-              zIndex: layer.zIndex || i + 1,
-              pointerEvents: 'none',
-              userSelect: 'none',
-              transform: animatedTransform,
-            }}
-            draggable={false}
-          />
-        );
-      })}
+      {/* Render 3D layers as background */}
+      {layers.filter(layer => layer.type === '3d' && typeof layer.component === 'function').map((layer, i) =>
+        <div key={`3d-${i}`} style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+          {React.createElement(layer.component, { camera: layer.camera })}
+        </div>
+      )}
+      {/* Render image layers above */}
+      {layers.filter(layer => layer.type !== '3d').map((layer, i) => (
+        <animated.img
+          key={i}
+          src={layer.src}
+          alt={`Layer ${i}`}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: (layer.zIndex || i + 2),
+            opacity: layer.opacity || 1,
+            pointerEvents: 'none',
+            filter: 'none',
+            boxShadow: 'none',
+            mixBlendMode: 'normal',
+          }}
+          draggable={false}
+        />
+      ))}
       {title && (
         <div className="absolute bottom-4 left-0 w-full text-center text-white text-xl font-bold drop-shadow-lg z-20 select-none pointer-events-none">
           {title}
@@ -158,4 +160,4 @@ export default function ParallaxCard({
       )}
     </animated.div>
   );
-} 
+}
