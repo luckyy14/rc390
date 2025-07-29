@@ -55,6 +55,8 @@ export default function ParallaxCard({
     const scrollEnd = cardTop + 0.4 * window.innerHeight;
     scrollProgress = (scroll - scrollStart) / (scrollEnd - scrollStart);
     scrollProgress = Math.max(0, Math.min(1, scrollProgress));
+    // If page is at the top, force scrollProgress to 0
+    if (typeof window !== "undefined" && window.scrollY < 10) scrollProgress = 0;
   }
   if (zoomOnScroll && scrollProgress > 0.8) onZoomed();
   // Mouse move for tilt only
@@ -120,6 +122,7 @@ export default function ParallaxCard({
   useEffect(() => {
     if (scrollProgress > 0) {
       // Accelerate scroll progress for faster zoom/size increase
+      console.log("scrollProgress", scrollProgress);
       const fastProgress = Math.min(Math.pow(scrollProgress, 0.4), 5);
       const rect = cardRef.current ? cardRef.current.getBoundingClientRect() : { left: 0, top: 0, width, height };
       const originCenterX = rect.left + rect.width / 2;
@@ -132,7 +135,6 @@ export default function ParallaxCard({
 
       const widthVal = rect.width + (window.innerWidth - rect.width) * fastProgress;
       const heightVal = rect.height + (window.innerHeight - rect.height) * fastProgress;
-      console.log(`Card ${title} zoomed to:`, widthVal, heightVal);
       setCurrentSize({ width: widthVal, height: heightVal });
       setAnimatedStyle({
         position: "fixed",
@@ -141,13 +143,15 @@ export default function ParallaxCard({
         transition: `box-shadow 0.2s, left 0.3s cubic-bezier(0.4,0,0.2,1), top 0.3s cubic-bezier(0.4,0,0.2,1), width 0.5s cubic-bezier(0.4,0,0.2,1), height 0.5s cubic-bezier(0.4,0,0.2,1)`,
       });
     } else {
+      // On initial load or scrollProgress === 0, reset to initial size
+      setCurrentSize({ width, height });
       setAnimatedStyle({
         touchAction: 'none',
         ...style,
         transition: 'box-shadow 0.2s',
       });
     }
-  }, [scrollProgress]);
+  }, [scrollProgress, width, height]);
   // Tilt transform is now applied to the parent card, not the child
   const tiltParent = {
     transform: to([x, y], (rx, ry) => {
@@ -211,7 +215,6 @@ export default function ParallaxCard({
             const imgWidth = Math.min(width * imgScale, window.innerWidth);
             const imgHeight = Math.min(height * imgScale, window.innerHeight);
             
-            console.log(`Layer ${i} imgWidth:`, window.innerWidth);
             return (
               <animated.img
                 key={i}
