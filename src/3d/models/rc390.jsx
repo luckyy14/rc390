@@ -13,7 +13,7 @@ import { OrbitControls, useGLTF, Environment, Html } from "@react-three/drei";
 import * as THREE from "three";
 
 export function Rc390({ scale = 1, position = [0, -0.6, 0], foamMap, onSceneReady }) {
-const { scene: originalScene } = useGLTF("/src/3d/glb/ktm.glb");
+const { scene: originalScene } = useGLTF("/assets/ktm.glb");
   const [scene] = React.useState(() => originalScene.clone(true));
 
   useEffect(() => {

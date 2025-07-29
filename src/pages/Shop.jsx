@@ -38,7 +38,7 @@ const Shop = () => {
             </a>
           ) : (
             <model-viewer
-src="/src/3d/glb/ktm.glb"
+src="/assets/ktm.glb"
               ar
               ar-modes={arModes}
               camera-controls

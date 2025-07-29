@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
-export function FoamOverlay3D({ modelUrl = "/src/3d/glb/ktm.glb", scale = 1, position = [0, 0, 0], wipeRadius, hidden, setHidden, ragMode }) {
+export function FoamOverlay3D({ modelUrl = "/assets/ktm.glb", scale = 1, position = [0, 0, 0], wipeRadius, hidden, setHidden, ragMode }) {
   const { scene: originalScene } = useGLTF(modelUrl);
   const [scene] = useState(() => originalScene.clone(true));
 

@@ -172,7 +172,7 @@ export default function ParallaxCard({
             const crx = clamp(x.get(), -15, 15);
             const cry = clamp(y.get(), -15, 15);
             const rotX = -crx * Math.PI / 180 * 3;
-            const rotY = cry * Math.PI / 180 * 8;
+            const rotY = cry * Math.PI / 180 * 7;
             // Render the 3D layer as a function inside Canvas context
             return (
               <div
