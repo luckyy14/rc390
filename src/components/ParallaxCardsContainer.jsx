@@ -29,7 +29,7 @@ const cards = [
     title: '',
     layers: [
       { type: '3d', component: Rc390WithControls, speed: 0, zIndex: -2, centerYOffset: 150, camera: { position: [0, 0, 8], fov: 50 } },
-      { src: mountain1, speed: -1, zIndex: -3, centerYOffset: -150 },
+      { src: mountain1, speed: -1, zIndex: -3, centerYOffset: -100 },
       { src: sky1, speed: -3, zIndex: -4, centerYOffset: -150, opacity: 0.3 },
     ],
     zoomOnScroll: true,

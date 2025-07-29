@@ -120,7 +120,7 @@ export default function ParallaxCard({
   useEffect(() => {
     if (scrollProgress > 0) {
       // Accelerate scroll progress for faster zoom/size increase
-      const fastProgress = Math.min(Math.pow(scrollProgress, 0.9), 1);
+      const fastProgress = Math.min(Math.pow(scrollProgress, 0.4), 5);
       const rect = cardRef.current ? cardRef.current.getBoundingClientRect() : { left: 0, top: 0, width, height };
       const originCenterX = rect.left + rect.width / 2;
       const originCenterY = rect.top + rect.height / 2;
@@ -197,17 +197,19 @@ export default function ParallaxCard({
           {layers.filter(layer => layer.type !== '3d').map((layer, i) => {
             // Ensure image is always large enough to cover card during parallax
             // Use a larger multiplier to guarantee no edge exposure
-            const imgScale = 2.6; // 60% larger than card
-            const imgWidth = width * imgScale;
-            const imgHeight = height * imgScale;
+            const imgScale = 2.6;
+            const imgWidth = Math.min(width * imgScale, window.innerWidth);
+            const imgHeight = Math.min(height * imgScale, window.innerHeight);
+            
+            console.log(`Layer ${i} imgWidth:`, window.innerWidth);
             return (
               <animated.img
                 key={i}
                 src={layer.src}
                 alt={`Layer ${i}`}
                 style={{
-                  width: `${imgWidth}px`,
-                  height: `${imgHeight}px`,
+                  width: `${window.innerWidth}px`,
+                  height: `${window.innerHeight}px`,
                   objectFit: 'cover',
                   position: 'absolute',
                   top: '50%',
