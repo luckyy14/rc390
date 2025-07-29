@@ -11,6 +11,7 @@ import TireSkidTrail from "./ui/TireSkidTrail";
 /* import HamburgerMenu from "./ui/HamburgerMenu"; */
 import NFSNavbar from "./ui/NFSNavbar";
 import { ParallaxProvider } from 'react-scroll-parallax';
+import LenisProvider from "./layouts/LenisProvider";
 import ThreeDLayout from "./layouts/ThreeDLayout";
 import CanvasSelector from "./layouts/CanvasSelector";
 import AnimatedBorder from "./components/AnimatedBorder";
@@ -18,9 +19,10 @@ import AnimatedBorder from "./components/AnimatedBorder";
 const App = () => {
   return (
     <Router>
+      <LenisProvider>
         <ParallaxProvider>
           <ThreeDLayout canvas={<CanvasSelector />}>
-          <AnimatedBorder />
+            <AnimatedBorder />
             {/* <TireSkidTrail /> */}
             <NFSNavbar />
             <Routes>
@@ -33,6 +35,7 @@ const App = () => {
             </Routes>
           </ThreeDLayout>
         </ParallaxProvider>
+      </LenisProvider>
     </Router>
   );
 };

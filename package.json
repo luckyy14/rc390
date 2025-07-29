@@ -13,6 +13,7 @@
     "@react-spring/web": "^10.0.1",
     "@react-three/drei": "^10.3.0",
     "@react-three/fiber": "^9.1.2",
+    "@studio-freight/lenis": "^1.0.42",
     "@tanstack/query-persist-client-core": "^5.81.5",
     "@tanstack/react-query": "^5.81.5",
     "@tanstack/react-query-persist-client": "^5.81.5",
