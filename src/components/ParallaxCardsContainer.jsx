@@ -47,7 +47,7 @@ const cards = [
   {
     title: '',
     layers: [
-      { type: '3d', component: Rc390WithControls, speed: 0, zIndex: -2, centerYOffset: 150, camera: { position: [0, 0, 8], fov: 50 } },
+      { type: '3d', component: Rc390WithControls, speed: 0, zIndex: -2, centerYOffset: 150, a: { position: [0, 0, 8], fov: 50 } },
       { src: mountain1, speed: -1, zIndex: -3, centerYOffset: -100 },
       { src: sky1, speed: -3, zIndex: -4, centerYOffset: -150, opacity: 0.3 },
     ],
@@ -64,13 +64,13 @@ export default function ParallaxCardsContainer() {
         ref={containerRef}
         className="flex flex-row justify-center items-center gap-8 py-16"
         style={{
-          position: 'absolute',
+          position: 'fixed',
           left: '50%',
           top: '50%',
           transform: 'translate(-50%, -50%)',
           perspective: '1000px',
           width: '100vw',
-          height: '100vh'
+          pointerEvents: 'none', // allow scroll events to pass through
         }}
       >
         {cards.map((card, i) => (

@@ -37,9 +37,7 @@ export default function ParallaxCard({
     config: { mass: 2, tension: 300, friction: 30 },
   }));
 
-  // Use Lenis scroll position to drive zoom/fullscreen
-  // Assume the card's zoom progress is based on scroll position relative to the card
-  // For demo: map scroll from 0 to window.innerHeight to progress 0-1
+  // Use Lenis scroll position for zoom progress
   const [cardTop, setCardTop] = useState(0);
   useEffect(() => {
     if (cardRef.current) {
@@ -47,18 +45,11 @@ export default function ParallaxCard({
       setCardTop(rect.top + window.scrollY);
     }
   }, []);
-  // Always interpolate size based on Lenis scroll position, with more size per scroll
-  // Increase the effect by reducing the denominator (e.g., 0.4 * window.innerHeight)
   let scrollProgress = 0;
   if (cardTop > 0) {
-    const scrollStart = cardTop - window.innerHeight / 2;
-    const scrollEnd = cardTop + 0.4 * window.innerHeight;
-    scrollProgress = (scroll - scrollStart) / (scrollEnd - scrollStart);
-    scrollProgress = Math.max(0, Math.min(1, scrollProgress));
-    // If page is at the top, force scrollProgress to 0
-    if (typeof window !== "undefined" && window.scrollY < 10) scrollProgress = 0;
+    // Only zoom when card is near the center of the viewport (±10% of viewport height)
+    scrollProgress = scroll/1000;
   }
-  if (zoomOnScroll && scrollProgress > 0.8) onZoomed();
   // Mouse move for tilt only
   useEffect(() => {
     let frame = null;
@@ -107,7 +98,7 @@ export default function ParallaxCard({
       y: tiltY,
       immediate: false
     });
-  }, [mouse, api, scrollProgress, currentSize]);
+  }, [mouse, api, currentSize]);
 
   // (moved up)
 
@@ -120,32 +111,24 @@ export default function ParallaxCard({
   let tiltStyle = {};
 
   useEffect(() => {
+    // Animate zoom based on scrollProgress (0 to 1)
     if (scrollProgress > 0) {
-      // Accelerate scroll progress for faster zoom/size increase
-      console.log("scrollProgress", scrollProgress);
-      const fastProgress = Math.min(Math.pow(scrollProgress, 0.4), 5);
-      const rect = cardRef.current ? cardRef.current.getBoundingClientRect() : { left: 0, top: 0, width, height };
-      const originCenterX = rect.left + rect.width / 2;
-      const originCenterY = rect.top + rect.height / 2;
-      const targetCenterX = window.innerWidth / 2;
-      const targetCenterY = window.innerHeight / 2;
-
-      const centerX = originCenterX + (targetCenterX - originCenterX) * fastProgress;
-      const centerY = originCenterY + (targetCenterY - originCenterY) * fastProgress;
-
-      const widthVal = rect.width + (window.innerWidth - rect.width) * fastProgress;
-      const heightVal = rect.height + (window.innerHeight - rect.height) * fastProgress;
+      const fastProgress = Math.min(Math.pow(scrollProgress, 0.9), 1);
+      const widthVal = width + (window.innerWidth - width) * fastProgress;
+      const heightVal = height + (window.innerHeight - height) * fastProgress;
       setCurrentSize({ width: widthVal, height: heightVal });
       setAnimatedStyle({
         position: "fixed",
+        transform: "translate(-50%, -50%)",
         touchAction: 'none',
         ...style,
         transition: `box-shadow 0.2s, left 0.3s cubic-bezier(0.4,0,0.2,1), top 0.3s cubic-bezier(0.4,0,0.2,1), width 0.5s cubic-bezier(0.4,0,0.2,1), height 0.5s cubic-bezier(0.4,0,0.2,1)`,
       });
     } else {
-      // On initial load or scrollProgress === 0, reset to initial size
       setCurrentSize({ width, height });
       setAnimatedStyle({
+        position: "fixed",
+        transform: "translate(-50%, -50%)",
         touchAction: 'none',
         ...style,
         transition: 'box-shadow 0.2s',
@@ -177,7 +160,7 @@ export default function ParallaxCard({
         overflow: 'hidden',
         cursor: 'pointer',
         touchAction: 'none',
-        borderRadius: 24
+        borderRadius: 24,
       }}
     >
       <div className="w-full h-full">

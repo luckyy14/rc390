@@ -8,15 +8,15 @@ import React from "react";
  */
 export default function ThreeDLayout({ canvas, children }) {
   return (
-    <div style={{ position: "relative", width: "100vw", height: "100vh", overflow: "hidden" }}>
+    <div style={{ position: "relative" }}>
       {/* 3D Canvas Layer */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           zIndex: 0,
-          width: "100vw",
-          height: "100vh",
+          // minWidth: "100vw",
+          // minHeight: "100vh",
           pointerEvents: "auto"
         }}
         onWheel={e => {

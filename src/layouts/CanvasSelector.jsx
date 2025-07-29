@@ -5,7 +5,7 @@ import { Rc390Viewer } from "../3d/models/rc390";
 
 // Map routes to 3D/visual background components
 const canvasMap = {
-  "/": <ParallaxCardsContainer />,
+  "/": <div style={{ position: "relative", width: "100vw", height: "1500px"}}><ParallaxCardsContainer /></div>,
   "/display": <Rc390Viewer />,
   // Add more routes and backgrounds as needed
 };
