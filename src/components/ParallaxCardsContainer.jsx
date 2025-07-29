@@ -8,19 +8,38 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 
 // Custom 3D component with OrbitControls for testing
-function Rc390WithControls({ camera }) {
+import { useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+
+function Rc390WithControls({ camera, rotX = 0, rotY = 0 }) {
+  // This function returns a JSX element to be called inside Canvas context
   return (
     <Canvas camera={camera} style={{ width: '100%', height: '100%' }}>
+      <TiltedGroup rotX={rotX} rotY={rotY} />
+      {/* OrbitControls disabled for parallax card */}
+      {/* <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} /> */}
+    </Canvas>
+  );
+}
+
+// Must be defined outside Rc390WithControls to avoid hooks error
+function TiltedGroup({ rotX = 0, rotY = 0 }) {
+  const groupRef = useRef();
+  useFrame(() => {
+    if (groupRef.current) {
+      groupRef.current.rotation.x = rotX;
+      groupRef.current.rotation.y = rotY;
+    }
+  });
+  return (
+    <group ref={groupRef}>
       <ambientLight intensity={2} />
       <pointLight position={[0, 5, 0]} intensity={2} color="#fff" castShadow />
       <pointLight position={[5, 5, 5]} intensity={1.5} color="#fff" />
       <pointLight position={[-5, 5, -5]} intensity={1.5} color="#fff" />
       <directionalLight position={[2, 5, 2]} intensity={1.2} />
-      {/* Render the RC390 model directly, not Rc390Viewer */}
       <Rc390 scale={2.7} position={[0, -3, 0]} />
-      {/* OrbitControls disabled for parallax card */}
-      {/* <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} /> */}
-    </Canvas>
+    </group>
   );
 }
 

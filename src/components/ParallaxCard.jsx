@@ -132,6 +132,7 @@ export default function ParallaxCard({
 
       const widthVal = rect.width + (window.innerWidth - rect.width) * fastProgress;
       const heightVal = rect.height + (window.innerHeight - rect.height) * fastProgress;
+      console.log(`Card ${title} zoomed to:`, widthVal, heightVal);
       setCurrentSize({ width: widthVal, height: heightVal });
       setAnimatedStyle({
         position: "fixed",
@@ -178,21 +179,30 @@ export default function ParallaxCard({
       <div className="w-full h-full">
         <div className="w-full h-full pointer-events-none">
           {/* Render 3D layers as background */}
-          {layers.filter(layer => layer.type === '3d' && typeof layer.component === 'function').map((layer, i) =>
-            <div
-              key={`3d-${i}`}
-              style={{
-                position: 'absolute',
-                inset: 0,
-                zIndex: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              {React.createElement(layer.component, { camera: layer.camera })}
-            </div>
-          )}
+          {layers.filter(layer => layer.type === '3d' && typeof layer.component === 'function').map((layer, i) => {
+            // Camera offset based on tilt (x, y)
+            const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+            const crx = clamp(x.get(), -15, 15);
+            const cry = clamp(y.get(), -15, 15);
+            const rotX = -crx * Math.PI / 180 * 3;
+            const rotY = cry * Math.PI / 180 * 8;
+            // Render the 3D layer as a function inside Canvas context
+            return (
+              <div
+                key={`3d-${i}`}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  zIndex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                {layer.component({ camera: layer.camera, rotX, rotY })}
+              </div>
+            );
+          })}
           {/* Render image layers above */}
           {layers.filter(layer => layer.type !== '3d').map((layer, i) => {
             // Ensure image is always large enough to cover card during parallax
