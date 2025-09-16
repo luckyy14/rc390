@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tyre Skid with Tread</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #111;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="skidCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById("skidCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let lastX = null, lastY = null;
+    const skids = [];
+
+    const baseWidth = 62;
+    const maxLength = 120;
+    const fadeSpeed = 0.008;
+    const lengthScale = 2.5;
+
+    // Create pattern for tyre tread
+    const patternCanvas = document.createElement("canvas");
+    patternCanvas.width = 16;
+    patternCanvas.height = 16;
+    const pctx = patternCanvas.getContext("2d");
+
+    // Draw diagonal tread pattern (cross-hatch)
+    pctx.fillStyle = "white";
+    pctx.fillRect(0, 0, 4, 4);
+    pctx.fillRect(12, 12, 4, 4);
+    pctx.clearRect(4, 0, 8, 4);
+    pctx.clearRect(0, 4, 4, 8);
+    pctx.clearRect(12, 4, 4, 8);
+    pctx.clearRect(4, 12, 8, 4);
+
+    const treadPattern = ctx.createPattern(patternCanvas, "repeat");
+
+    function addSkid(x, y, dx, dy) {
+      const mag = Math.sqrt(dx*dx + dy*dy);
+      if (mag < 0.5) return;
+
+      const angle = Math.atan2(dy, dx);
+      skids.push({
+        x, y,
+        angle,
+        age: 0,
+        length: Math.min(maxLength, mag * lengthScale),
+        width: baseWidth
+      });
+    }
+
+    function updateAndDraw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = skids.length - 1; i >= 0; i--) {
+        const skid = skids[i];
+        skid.age += fadeSpeed;
+        skid.width = baseWidth * (1 - skid.age);
+
+        if (skid.age >= 1) {
+          skids.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.translate(skid.x, skid.y);
+        ctx.rotate(skid.angle);
+
+        ctx.fillStyle = treadPattern;
+        ctx.globalAlpha = 1 - skid.age;
+
+        ctx.fillRect(
+          -skid.length / 2,
+          -skid.width / 2,
+          skid.length,
+          skid.width
+        );
+
+        ctx.restore();
+        ctx.globalAlpha = 1;
+      }
+
+      requestAnimationFrame(updateAndDraw);
+    }
+
+    canvas.addEventListener("mousemove", e => {
+      if (lastX !== null && lastY !== null) {
+        const dx = e.clientX - lastX;
+        const dy = e.clientY - lastY;
+        addSkid(e.clientX, e.clientY, dx, dy);
+      }
+      lastX = e.clientX;
+      lastY = e.clientY;
+    });
+
+    updateAndDraw();
+  </script>
+</body>
+</html>

@@ -21,9 +21,9 @@ const App = () => {
     <Router>
       <LenisProvider>
         <ParallaxProvider>
+          <TireSkidTrail />
           <ThreeDLayout canvas={<CanvasSelector />}>
             <AnimatedBorder />
-            {/* <TireSkidTrail /> */}
             <NFSNavbar />
             <Routes>
               <Route path="/" element={null} />

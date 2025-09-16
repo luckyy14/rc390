@@ -19,7 +19,7 @@ body {
   font-family: 'Inter', 'Rajdhani', sans-serif;
   background: var(--color-primary);
   color: var(--color-text-main);
-  cursor: url('/icons/tire_tread.png'), auto;
+  cursor: url('/assets/wheel.png') 16 16, auto !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
