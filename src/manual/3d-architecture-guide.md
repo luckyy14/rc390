@@ -1,3 +1,15 @@
+# Migration Notes: React Three Fiber, Drei, and shadcn/tailwind
+
+This codebase has been migrated from legacy Three.js and CSS to use React Three Fiber (r3f), Drei, and shadcn/tailwind for all 3D, UI, and CSS logic.
+
+- All 3D scene logic uses r3f and Drei components/hooks.
+- All UI components use shadcn/tailwind classes.
+- Legacy Three.js helpers and CSS have been removed.
+- See `src/3d/r3fBase.jsx`, `src/3d/dreiHelpers.js`, and `src/theme/shadcn.css` for new usage patterns.
+- Pages (Garage, Manual, Shop, Display, Exhaust) are migrated for feature parity and maintainability.
+
+---
+
 # Intuitive 3D Website Architecture Guide
 
 This guide provides a practical implementation plan for the 3D website takeaways, using components, hooks, routes, and HOCs for a scalable, maintainable codebase.

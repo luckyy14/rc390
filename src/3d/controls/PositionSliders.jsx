@@ -1,12 +1,10 @@
-import '../../ui/BikeCardControls.css';
-
 export default function PositionSliders({ position, setPosition }) {
   return (
-    <div className="bikecard-slider-group bikecard-position-group">
-      <div className="bikecard-slider-group-label">Position</div>
+    <div className="shadcn-card mb-4">
+      <div className="font-bold text-lg mb-2">Position</div>
       {["X", "Y", "Z"].map((axis, i) => (
-        <div key={axis} className="bikecard-slider-row">
-          <span className="bikecard-slider-axis">{axis}:</span>
+        <div key={axis} className="flex items-center gap-3 mb-2">
+          <span className="font-mono text-orange-400 w-6">{axis}:</span>
           <input
             type="range"
             min={-10}
@@ -14,9 +12,9 @@ export default function PositionSliders({ position, setPosition }) {
             step={0.01}
             value={position[i]}
             onChange={e => setPosition(i, Number(e.target.value))}
-            className="bikecard-slider"
+            className="w-32 accent-orange-600 rounded h-2"
           />
-          <span className="bikecard-slider-value">{position[i].toFixed(2)}</span>
+          <span className="font-mono text-white ml-2">{position[i].toFixed(2)}</span>
         </div>
       ))}
     </div>

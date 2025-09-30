@@ -2,9 +2,9 @@ import React from "react";
 
 /**
  * ThreeDLayout
- * Renders a 3D canvas layer absolutely at z-index -1, and a 2D HTML layer at z-index 0.
+ * Renders a 3D canvas layer absolutely at z-index 0, and a 2D HTML layer at z-index 1.
  * Usage:
- * <ThreeDLayout canvas={<Canvas3D />}><Your2DContent /></ThreeDLayout>
+ * <ThreeDLayout canvas={<CanvasSelector />}>{children}</ThreeDLayout>
  */
 export default function ThreeDLayout({ canvas, children }) {
   return (
@@ -15,15 +15,7 @@ export default function ThreeDLayout({ canvas, children }) {
           position: "absolute",
           inset: 0,
           zIndex: 0,
-          // minWidth: "100vw",
-          // minHeight: "100vh",
           pointerEvents: "auto"
-        }}
-        onWheel={e => {
-          console.log("[ThreeDLayout] onWheel event", e.deltaY, e);
-        }}
-        onScroll={e => {
-          console.log("[ThreeDLayout] onScroll event", e);
         }}
       >
         {canvas}

@@ -1,18 +1,10 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
 import { Rc390 } from "../3d/models/rc390";
-import * as THREE from "three";
-import ragIcon from "../assets/rag.svg";
-import foamIcon from "../assets/foam.svg";
-import wipeIcon from "../assets/wipe.svg";
+import R3FBase from "../3d/r3fBase";
+import { OrbitControls } from "@react-three/drei";
 import PageLayout from "../layouts/PageLayout";
 import { FoamOverlay3D } from "../components/FoamOverlay3D";
-import { WaterSprayCursor } from "../components/WaterSprayCursor";
-
-// Safari/legacy browser compatibility helpers
-const isSafari = typeof window !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 const Garage = () => {
   const [foamLayers, setFoamLayers] = useState([]);
@@ -45,28 +37,30 @@ const Garage = () => {
         <h1 className="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-6 mt-2 tracking-widest uppercase font-heading">Garage</h1>
         <div className="flex flex-row flex-wrap mweb-flex-col w-full h-auto">
           <div className="flex-1 flex items-center justify-center min-w-[320px] min-h-[320px] md:min-w-[480px] md:min-h-[480px]" style={{height:'60vh'}}>
-            <Canvas camera={{ position: [2, 2, 5], fov: 50 }} style={{ width: '100%', height: '100%' }}>
-              <ambientLight intensity={0.5} />
-              <directionalLight position={[2, 5, 2]} intensity={1.2} />
-              <Rc390 scale={2} position={[0, -0.6, 0]} />
-              {foamLayers.map((layer, i) => (
-                <FoamOverlay3D
-                  key={layer.key}
-                  scale={layer.scale}
-                  position={[0, -0.6, 0]}
-                  wipeRadius={wipeRadius}
-                  hidden={hidden}
-                  setHidden={setHidden}
-                  ragMode={ragMode}
-                />
-              ))}
-              <OrbitControls enablePan={!ragMode} enableZoom enableRotate={!ragMode} />
-            </Canvas>
+            <div className="w-full h-full">
+              <R3FBase camera={{ position: [2, 2, 5], fov: 50 }}>
+                <ambientLight intensity={0.5} />
+                <directionalLight position={[2, 5, 2]} intensity={1.2} />
+                <Rc390 scale={2} position={[0, -0.6, 0]} />
+                {foamLayers.map((layer) => (
+                  <FoamOverlay3D
+                    key={layer.key}
+                    scale={layer.scale}
+                    position={[0, -0.6, 0]}
+                    wipeRadius={wipeRadius}
+                    hidden={hidden}
+                    setHidden={setHidden}
+                    ragMode={ragMode}
+                  />
+                ))}
+                <OrbitControls enablePan={!ragMode} enableZoom enableRotate={!ragMode} />
+              </R3FBase>
+            </div>
           </div>
         </div>
-        <div className="flex justify-center items-center gap-1 mt-4">
+        <div className="flex justify-center items-center gap-2 mt-4">
           <button
-            className={`button button-tertiary flex items-center gap-1 p-1 text-sm ${ragMode ? 'bg-[var(--color-accent)] text-[var(--color-white)]' : ''}`}
+            className={`shadcn-btn flex items-center gap-1 text-sm px-3 py-2 ${ragMode ? 'bg-[var(--shadcn-accent)] text-white' : ''}`}
             onClick={() => setRagMode((v) => !v)}
             aria-pressed={ragMode}
             title={ragMode ? 'Wipe Mode: ON' : 'Wipe Mode'}
@@ -76,16 +70,16 @@ const Garage = () => {
             {ragMode ? 'Wipe Mode: ON' : 'Wipe Mode'}
           </button>
           <button
-            className="button button-tertiary flex items-center justify-center p-1 text-sm"
-            style={{ minWidth: 0, minHeight: 0, width: 28, height: 28, fontSize: '0.9rem' }}
+            className="shadcn-btn flex items-center justify-center text-sm px-2 py-2"
+            style={{ width: 32, height: 32, fontSize: '0.9rem' }}
             onClick={handleFoamIt}
             title="Add Foam"
           >
             <img src="/assets/foam.svg" alt="Foam icon for add foam" className="w-5 h-5" />
           </button>
           <button
-            className="button button-tertiary flex items-center justify-center p-1 text-sm"
-            style={{ minWidth: 0, minHeight: 0, width: 28, height: 28, fontSize: '0.9rem' }}
+            className="shadcn-btn flex items-center justify-center text-sm px-2 py-2"
+            style={{ width: 32, height: 32, fontSize: '0.9rem' }}
             onClick={handleWipeFoam}
             title="Wipe All Foam"
           >

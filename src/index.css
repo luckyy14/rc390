@@ -8,7 +8,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 }
 
 @import "../src/theme/constants/variables.css";
-@import "../src/theme/button.css";
+@import "../src/theme/shadcn.css";
 @import "../src/theme/bike-theme.css";
 
 @tailwind base;

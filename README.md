@@ -1,12 +1,42 @@
-# React + Vite
+# RC390 Migration: React Three Fiber, Drei, and shadcn/tailwind
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+This codebase has been migrated to use [React Three Fiber (r3f)](https://docs.pmnd.rs/react-three-fiber), [Drei](https://github.com/pmndrs/drei), and [shadcn/tailwind](https://ui.shadcn.com/) for all 3D, UI, and CSS logic.  
+Legacy Three.js and CSS have been replaced for maintainability, modern patterns, and feature parity.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Key Changes
 
-## Expanding the ESLint configuration
+- **3D Architecture:** All 3D logic uses r3f and Drei. See `src/3d/r3fBase.jsx` and `src/3d/dreiHelpers.js`.
+- **UI Components:** All UI uses shadcn/tailwind classes. See `src/theme/shadcn.css` and `src/ui/shadcnComponents/`.
+- **Pages:** Garage, Manual, Shop, Display, and Exhaust pages are migrated to r3f/Drei/shadcn/tailwind.
+- **Removed:** Legacy Three.js helpers and CSS.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Usage
+
+- **3D Scenes:** Wrap with `<R3FBase>...</R3FBase>` for Canvas, controls, and environment.
+- **GLTF Models:** Use `useDreiGLTF(url)` from `src/3d/dreiHelpers.js`.
+- **UI:** Use shadcn/tailwind classes for all buttons, cards, and forms.
+
+## Migration Notes
+
+- See `src/3d/r3fREADME.md` for r3f/Drei usage patterns.
+- See `src/manual/3d-architecture-guide.md` for migration details.
+
+## Development
+
+- **Install dependencies:**  
+  `yarn install`
+- **Run dev server:**  
+  `yarn dev`
+
+## Directory Structure
+
+- `src/3d/` — r3f/Drei base, helpers, and models
+- `src/ui/` — shadcn/tailwind UI components
+- `src/theme/` — CSS variables and overrides
+- `src/pages/` — Main pages (Garage, Manual, Shop, Display, Exhaust)
+
+## License
+
+MIT

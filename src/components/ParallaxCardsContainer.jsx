@@ -70,7 +70,8 @@ export default function ParallaxCardsContainer() {
           transform: 'translate(-50%, -50%)',
           perspective: '1000px',
           width: '100vw',
-          pointerEvents: 'none', // allow scroll events to pass through
+          pointerEvents: 'auto', // allow scroll and mouse events
+          cursor: 'none', // hide cursor over cards
         }}
       >
         {cards.map((card, i) => (

@@ -47,8 +47,8 @@ export default function ParallaxCard({
   }, []);
   let scrollProgress = 0;
   if (cardTop > 0) {
-    // Only zoom when card is near the center of the viewport (±10% of viewport height)
-    scrollProgress = scroll/1000;
+    // Zoom to fullscreen when scroll reaches 70% of viewport height
+    scrollProgress = Math.min(scroll / (window.innerHeight * 0.7), 1);
   }
   // Mouse move for tilt only
   useEffect(() => {

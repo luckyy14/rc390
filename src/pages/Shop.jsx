@@ -32,7 +32,7 @@ const Shop = () => {
             <a
               href="/assets/ktm.usdz"
               rel="ar"
-              className="mt-4 px-6 py-2 bg-[var(--color-accent)] text-white rounded-lg font-semibold shadow hover:bg-orange-700 transition"
+              className="shadcn-btn mt-4 px-6 py-2 text-white font-semibold"
             >
               View in AR (iOS)
             </a>

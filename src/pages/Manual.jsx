@@ -93,9 +93,6 @@ const Manual = () => {
     setInputValue("");
   };
 
-  // Safari/legacy browser compatibility helpers
-  const isSafari = typeof window !== 'undefined' && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
   return (
     <PageLayout>
       <div className="flex flex-col w-full min-h-[min(100dvh,600px)] h-auto bg-[var(--color-bg)] relative p-4 md:p-8">
@@ -113,20 +110,40 @@ const Manual = () => {
               <canvas ref={canvasRef} style={{ maxWidth: "100%", borderRadius: 8, boxShadow: "0 2px 8px #0008" }} />
               {loading && <div className="mt-4 text-[var(--color-accent)]">Loading...</div>}
               <div className="flex gap-4 mt-4">
-                <button onClick={handlePrev} disabled={pageNumber === 1} className="button button-primary" style={{ minWidth: 64 }}>Prev</button>
+                <button
+                  onClick={handlePrev}
+                  disabled={pageNumber === 1}
+                  className="shadcn-btn px-4 py-2 text-sm font-bold disabled:opacity-50"
+                  style={{ minWidth: 64 }}
+                >
+                  Prev
+                </button>
                 <span>Page {pageNumber} of {numPages}</span>
-                <button onClick={handleNext} disabled={pageNumber === numPages} className="button button-primary" style={{ minWidth: 64 }}>Next</button>
+                <button
+                  onClick={handleNext}
+                  disabled={pageNumber === numPages}
+                  className="shadcn-btn px-4 py-2 text-sm font-bold disabled:opacity-50"
+                  style={{ minWidth: 64 }}
+                >
+                  Next
+                </button>
                 <form onSubmit={handleInputGo} className="flex items-center gap-1">
                   <input
                     type="text"
                     value={inputValue}
                     onChange={handleInputChange}
                     placeholder="Go to page"
-                    className="w-16 px-2 py-1 rounded border border-[var(--color-accent)] bg-transparent text-[var(--color-white)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                    className="w-16 px-2 py-1 rounded border border-[var(--shadcn-accent)] bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-[var(--shadcn-accent)]"
                     inputMode="numeric"
                     pattern="[0-9]*"
                   />
-                  <button type="submit" className="button button-secondary" style={{ minWidth: 48 }}>Go</button>
+                  <button
+                    type="submit"
+                    className="shadcn-btn px-3 py-1 text-sm font-bold"
+                    style={{ minWidth: 48 }}
+                  >
+                    Go
+                  </button>
                 </form>
               </div>
             </div>

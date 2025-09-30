@@ -1,12 +1,10 @@
-import '../../ui/BikeCardControls.css';
-
 export default function RotationSliders({ rotation, setRotation }) {
   return (
-    <div className="bikecard-slider-group bikecard-rotation-group">
-      <div className="bikecard-slider-group-label">Rotation (radians)</div>
+    <div className="shadcn-card mb-4">
+      <div className="font-bold text-lg mb-2">Rotation (radians)</div>
       {["X", "Y", "Z"].map((axis, i) => (
-        <div key={axis} className="bikecard-slider-row">
-          <span className="bikecard-slider-axis">{axis}:</span>
+        <div key={axis} className="flex items-center gap-3 mb-2">
+          <span className="font-mono text-orange-400 w-6">{axis}:</span>
           <input
             type="range"
             min={-Math.PI}
@@ -14,9 +12,9 @@ export default function RotationSliders({ rotation, setRotation }) {
             step={0.01}
             value={rotation[i]}
             onChange={e => setRotation(i, Number(e.target.value))}
-            className="bikecard-slider"
+            className="w-32 accent-orange-600 rounded h-2"
           />
-          <span className="bikecard-slider-value">{rotation[i].toFixed(2)}</span>
+          <span className="font-mono text-white ml-2">{rotation[i].toFixed(2)}</span>
         </div>
       ))}
     </div>

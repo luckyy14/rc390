@@ -1,0 +1,24 @@
+/* src/theme/shadcn.css */
+/* Shadcn/tailwind CSS overrides and variables for rc390 */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Shadcn UI custom variables */
+:root {
+  --shadcn-primary: #ff6600;
+  --shadcn-surface: #18181b;
+  --shadcn-accent: #ffcc00;
+  --shadcn-border-radius: 0.75rem;
+  --shadcn-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+/* Example component overrides */
+.shadcn-btn {
+  @apply px-4 py-2 rounded-[var(--shadcn-border-radius)] bg-[var(--shadcn-primary)] text-white shadow-[var(--shadcn-shadow)] hover:bg-orange-700 transition;
+}
+
+.shadcn-card {
+  @apply bg-[var(--shadcn-surface)] text-white rounded-[var(--shadcn-border-radius)] shadow-[var(--shadcn-shadow)] p-6;
+}

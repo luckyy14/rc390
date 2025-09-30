@@ -1,7 +1,8 @@
 // src/ui/TireSkidTrail.jsx
 import React, { useRef, useEffect } from "react";
 
-export default function TireSkidTrail() {
+export default function TireSkidTrail({ enabled = true }) {
+  if (!enabled) return null;
   const canvasRef = useRef(null);
   const skids = useRef([]);
   const lastPos = useRef({ x: null, y: null });

@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-/* Home page import removed: file does not exist */
+import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import Display from "./pages/Display";
 import Exhaust from "./pages/Exhaust";
@@ -20,21 +20,22 @@ const App = () => {
   return (
     <Router>
       <LenisProvider>
-        <ParallaxProvider>
-          <TireSkidTrail />
-          <ThreeDLayout canvas={<CanvasSelector />}>
-            <AnimatedBorder />
-            <NFSNavbar />
-            <Routes>
-              <Route path="/" element={null} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/display" element={<Display />} />
-              <Route path="/exhaust" element={<Exhaust />} />
-              <Route path="/garage" element={<Garage />} />
-              <Route path="/manual" element={<Manual />} />
-            </Routes>
-          </ThreeDLayout>
-        </ParallaxProvider>
+        <ThreeDLayout canvas={
+          <ParallaxProvider>
+            <CanvasSelector />
+          </ParallaxProvider>
+        }>
+          <AnimatedBorder />
+          <NFSNavbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/display" element={<Display />} />
+            <Route path="/exhaust" element={<Exhaust />} />
+            <Route path="/garage" element={<Garage />} />
+            <Route path="/manual" element={<Manual />} />
+          </Routes>
+        </ThreeDLayout>
       </LenisProvider>
     </Router>
   );

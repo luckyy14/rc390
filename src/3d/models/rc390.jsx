@@ -266,7 +266,7 @@ export function Rc390Viewer({
   };
 
   return (
-    <div className="w-full h-[80vh] bg-[var(--color-bg)] relative p-4 md:p-8">
+    <div className="w-full h-[80vh] bg-[var(--color-bg)] relative p-4 md:p-8 cursor-none">
       <div
         className="absolute top-6 left-6 z-10 bg-[rgba(26,26,26,0.85)] p-4 md:p-6 rounded-lg shadow-lg border border-[var(--color-border)] min-w-[260px]"
         style={{
