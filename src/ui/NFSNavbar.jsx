@@ -12,16 +12,27 @@ const nfsnavitems = NAV_ITEMS.map(item => ({
 
 import { useTextScramble } from "../hooks/useTextScramble";
 
-const NFSNavItemWithScramble = React.memo(function NFSNavItemWithScramble({ opt, idx, selected, handleSelect, userInteracted, getTransform }) {
+const NFSNavItemWithScramble = React.memo(function NFSNavItemWithScramble({ opt, idx, selected, handleSelect, userInteracted, len }) {
   const [hovered, setHovered] = React.useState(false);
   const scrambled = useTextScramble(opt.label, hovered);
+
+  // Compute relative position for 3D effect
+  let rel = idx - selected;
+  if (rel > len / 2) rel -= len;
+  if (rel < -len / 2) rel += len;
+
+  let posClass = "";
+  if (idx === selected) posClass = "menu-3d-center";
+  else if (rel === -1) posClass = "menu-3d-left";
+  else if (rel === 1) posClass = "menu-3d-right";
+  else posClass = "menu-3d-far";
+
   return (
     <div
-      className={`menu-option menu-3d-item${idx === selected ? " selected" : ""}`}
+      className={`menu-option menu-3d-item ${posClass}${idx === selected ? " selected" : ""}`}
       key={opt.label}
       tabIndex={0}
       data-idx={idx}
-      style={getTransform(idx)}
       onClick={() => {
         userInteracted.current = true;
         handleSelect(idx);
@@ -135,49 +146,7 @@ export default function NFSNavbar() {
     navigate(nfsnavitems[idx].path);
   }, [navigate, playTick]);
 
-  // Render all items in a row, with 3D effect only for selected and neighbors
-  const getTransform = useCallback((idx) => {
-    const len = nfsnavitems.length;
-    let rel = idx - selected;
-    if (rel > len / 2) rel -= len;
-    if (rel < -len / 2) rel += len;
-
-    if (idx === selected) {
-      return {
-        transform: "scale(1.15) translateY(-10px)",
-        zIndex: 3,
-        opacity: 1,
-        filter: "none",
-        transition: "transform 0.4s cubic-bezier(.4,2,.6,1), opacity 0.3s, filter 0.3s",
-      };
-    }
-    if (rel === -1) {
-      return {
-        transform: "rotateY(25deg) scale(0.95) translateY(0px)",
-        zIndex: 2,
-        opacity: 0.85,
-        filter: "grayscale(40%) blur(0.2px)",
-        transition: "transform 0.4s cubic-bezier(.4,2,.6,1), opacity 0.3s, filter 0.3s",
-      };
-    }
-    if (rel === 1) {
-      return {
-        transform: "rotateY(-25deg) scale(0.95) translateY(0px)",
-        zIndex: 2,
-        opacity: 0.85,
-        filter: "grayscale(40%) blur(0.2px)",
-        transition: "transform 0.4s cubic-bezier(.4,2,.6,1), opacity 0.3s, filter 0.3s",
-      };
-    }
-    // Farther items
-    return {
-      transform: "scale(0.8)",
-      zIndex: 1,
-      opacity: 0.5,
-      filter: "grayscale(80%) blur(0.5px)",
-      transition: "transform 0.4s cubic-bezier(.4,2,.6,1), opacity 0.3s, filter 0.3s",
-    };
-  }, [selected]);
+  // No getTransform: use classNames for 3D effect
 
   React.useEffect(() => {
     // Debug: log when navbar renders
@@ -207,29 +176,13 @@ export default function NFSNavbar() {
               userInteracted.current = true;
               e.preventDefault();
               e.stopPropagation();
-              let ticks = Math.round(e.deltaY / 40);
-              if (Math.abs(e.deltaY) < 60) ticks = e.deltaY > 0 ? 1 : -1;
-              if (ticks === 0) ticks = e.deltaY > 0 ? 1 : -1;
-              let steps = Math.abs(ticks);
-              let dir = Math.sign(ticks);
+              let ticks = e.deltaY > 0 ? 1 : -1;
+              let dir = ticks;
               let tickRate = Math.min(2.5, 1 + Math.abs(e.deltaY) / 120);
-              if (steps === 1) {
-                let next = (selected + dir + len) % len;
-                setSelected(next);
-                playTick(tickRate);
-                navigate(nfsnavitems[next].path);
-              } else {
-                let animateTicks = (step = 0, curr = selected) => {
-                  let next = (curr + dir + len) % len;
-                  setSelected(next);
-                  playTick(tickRate);
-                  navigate(nfsnavitems[next].path);
-                  if (step + 1 < steps) {
-                    setTimeout(() => animateTicks(step + 1, next), 60 / tickRate);
-                  }
-                };
-                animateTicks();
-              }
+              let next = (selected + dir + len) % len;
+              setSelected(next);
+              playTick(tickRate);
+              navigate(nfsnavitems[next].path);
             };
             el.addEventListener("wheel", el._wheelHandler, { passive: false });
           }
@@ -302,7 +255,7 @@ export default function NFSNavbar() {
             selected={selected}
             handleSelect={handleSelect}
             userInteracted={userInteracted}
-            getTransform={getTransform}
+            len={len}
           />
         ))}
       </div>

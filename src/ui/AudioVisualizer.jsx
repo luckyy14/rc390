@@ -1,14 +1,10 @@
 import React, { useRef, useEffect, useState } from "react";
-import { useLayoutEffect } from "react";
-import gsap from "gsap";
 
 // AudioVisualizer: Circular waveform visualizer with play/pause button in the center
 export default function AudioVisualizer({
   src = "/assets/audio/mixkit-motorcycle-engine-doing-gearshift-2725.wav",
   size = 400, // Increased canvas size
   barCount = 128,
-  color = "#fff",
-  accent = "var(--color-accent)",
   ...props
 }) {
   const canvasRef = useRef(null);
@@ -121,8 +117,6 @@ export default function AudioVisualizer({
       const expansionMultiplier = 3;
       const radius = responsiveSize / 2 - (maxBarLength * expansionMultiplier) - 16;
       // Draw waveform bars and particles
-      let maxBarLengthVal = 0;
-      let barTipRadius = radius;
       // Ensure particle arrays are correct length
       if (particleRadiiRef.current.length !== effectiveBarCount) {
         particleRadiiRef.current = Array(effectiveBarCount).fill(null);
@@ -134,10 +128,6 @@ export default function AudioVisualizer({
         const angle = (i / effectiveBarCount) * 2 * Math.PI - Math.PI / 2;
         const v = lastDataArray[i] / 255.0;
         const barLength = v < 0.05 ? minBarLength : minBarLength + v * maxBarLength * expansionMultiplier;
-        if (i === 0) {
-          maxBarLengthVal = barLength;
-          barTipRadius = radius + barLength;
-        }
         const x1 = centerX + Math.cos(angle) * radius;
         const y1 = centerY + Math.sin(angle) * radius;
         const x2 = centerX + Math.cos(angle) * (radius + barLength);
@@ -258,10 +248,6 @@ export default function AudioVisualizer({
           width: responsiveSize,
           height: responsiveSize,
           background: "transparent",
-          position: "absolute",
-          left: "50%",
-          top: "50%",
-          transform: "translate(-45%, -47.5%)",
           zIndex: 1
         }}
       />
@@ -289,12 +275,12 @@ export default function AudioVisualizer({
           id="audio-hex-icon"
           width={buttonSize}
           height={buttonSize}
-          viewBox={`0 0 ${buttonSize} ${buttonSize}`}
+          viewBox="0 0 1024 1024"
           style={{ display: "block", filter: "drop-shadow(0 4px 16px rgba(0,0,0,0.25))" }}
         >
-          {/* Recalculate hexPoints and hexPath for new buttonSize */}
           {(() => {
-            const hex = buttonSize / 2;
+            // All geometry is now based on a 1024x1024 coordinate system
+            const hex = 512;
             const points = Array.from({ length: 6 }, (_, i) => {
               const angle = (Math.PI / 3) * i - Math.PI / 6;
               return [
@@ -308,11 +294,11 @@ export default function AudioVisualizer({
                 <path d={path} fill={hexFillColor} />
                 {isPlaying ? (
                   <g id="pause-group">
-                    <rect x={hex - 6} y={hex - 16} width="8" height="32" rx="2" fill={accentColor} />
-                    <rect x={hex + 6} y={hex - 16} width="8" height="32" rx="2" fill={accentColor} />
+                    <rect x={hex - 96} y={hex - 128} width="64" height="256" rx="20" fill={accentColor} />
+                    <rect x={hex + 32} y={hex - 128} width="64" height="256" rx="20" fill={accentColor} />
                   </g>
                 ) : (
-                  <polygon id="play-icon" points={`${hex - 8},${hex - 12} ${hex + 16},${hex} ${hex - 8},${hex + 12}`} fill={accentColor} />
+                  <polygon id="play-icon" points={`${hex - 64},${hex - 128} ${hex + 128},${hex} ${hex - 64},${hex + 128}`} fill={accentColor} />
                 )}
               </>
             );
@@ -325,6 +311,7 @@ export default function AudioVisualizer({
         src={src}
         preload="auto"
         onEnded={() => setIsPlaying(false)}
+        style={{ display: "none" }}
       />
     </div>
   );

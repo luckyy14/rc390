@@ -1,0 +1,47 @@
+.nfs-arrow {
+  position: absolute;
+  top: 50%;
+  width: 32px;
+  height: 32px;
+  background: none;
+  pointer-events: none;
+}
+.nfs-arrow-right {
+  right: -32px;
+  transform: translateY(-50%);
+}
+.nfs-arrow-right::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 20px solid #ffe600;
+  filter: drop-shadow(0 0 6px #ffe600cc);
+  animation: arrow-flash 0.7s infinite alternate;
+}
+.nfs-arrow-left {
+  left: -32px;
+  transform: translateY(-50%) scaleX(-1);
+}
+.nfs-arrow-left::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 20px solid #ffe600;
+  filter: drop-shadow(0 0 6px #ffe600cc);
+  animation: arrow-flash 0.7s infinite alternate;
+}
+
+@keyframes arrow-flash {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
