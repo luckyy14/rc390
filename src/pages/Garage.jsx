@@ -5,6 +5,7 @@ import R3FBase from "../3d/r3fBase";
 import { OrbitControls } from "@react-three/drei";
 import PageLayout from "../layouts/PageLayout";
 import { FoamOverlay3D } from "../components/FoamOverlay3D";
+import { FaHandSparkles, FaSoap, FaBroom } from "react-icons/fa";
 
 const Garage = () => {
   const [foamLayers, setFoamLayers] = useState([]);
@@ -58,32 +59,64 @@ const Garage = () => {
             </div>
           </div>
         </div>
-        <div className="flex justify-center items-center gap-2 mt-4">
+        <div className="flex justify-center items-center" style={{ gap: 32, marginTop: 16 }}>
           <button
-            className={`shadcn-btn flex items-center gap-1 text-sm px-3 py-2 ${ragMode ? 'bg-[var(--shadcn-accent)] text-white' : ''}`}
+            style={{
+              background: "transparent",
+              border: "none",
+              padding: 0,
+              margin: "0 8px",
+              cursor: "pointer",
+              width: 56,
+              height: 56,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
             onClick={() => setRagMode((v) => !v)}
             aria-pressed={ragMode}
-            title={ragMode ? 'Wipe Mode: ON' : 'Wipe Mode'}
-            style={{ fontSize: '0.9rem' }}
+            title={ragMode ? "Wipe Mode: ON" : "Wipe Mode"}
+            aria-label={ragMode ? "Wipe Mode: ON" : "Wipe Mode"}
           >
-            <img src="/assets/rag.svg" alt="Rag icon for wipe mode" className="w-5 h-5" />
-            {ragMode ? 'Wipe Mode: ON' : 'Wipe Mode'}
+            <FaHandSparkles style={{ width: 48, height: 48 }} aria-hidden="true" />
           </button>
           <button
-            className="shadcn-btn flex items-center justify-center text-sm px-2 py-2"
-            style={{ width: 32, height: 32, fontSize: '0.9rem' }}
+            style={{
+              background: "transparent",
+              border: "none",
+              padding: 0,
+              margin: "0 8px",
+              cursor: "pointer",
+              width: 56,
+              height: 56,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
             onClick={handleFoamIt}
             title="Add Foam"
+            aria-label="Add Foam"
           >
-            <img src="/assets/foam.svg" alt="Foam icon for add foam" className="w-5 h-5" />
+            <FaSoap style={{ width: 48, height: 48 }} aria-hidden="true" />
           </button>
           <button
-            className="shadcn-btn flex items-center justify-center text-sm px-2 py-2"
-            style={{ width: 32, height: 32, fontSize: '0.9rem' }}
+            style={{
+              background: "transparent",
+              border: "none",
+              padding: 0,
+              margin: "0 8px",
+              cursor: "pointer",
+              width: 56,
+              height: 56,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
             onClick={handleWipeFoam}
             title="Wipe All Foam"
+            aria-label="Wipe All Foam"
           >
-            <img src="/assets/wipe.svg" alt="Wipe icon for wipe foam" className="w-5 h-5" />
+            <FaBroom style={{ width: 48, height: 48 }} aria-hidden="true" />
           </button>
         </div>
         <div className="p-1 mt-6 bg-[rgba(26,26,26,0.85)] text-[var(--color-white)] px-4 py-3 md:px-6 md:py-4 rounded-lg shadow-lg font-heading text-xl tracking-widest border border-[var(--color-border)] w-fit max-w-full mx-auto">

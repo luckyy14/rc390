@@ -7,7 +7,8 @@ import { NAV_ITEMS } from "./nav-items.jsx";
 const nfsnavitems = NAV_ITEMS.map(item => ({
   label: item.label.toUpperCase(),
   path: item.to,
-  icon: item.iconLarge,
+  iconOutline: item.iconOutline,
+  iconFilled: item.iconFilled,
 }));
 
 import { useTextScramble } from "../hooks/useTextScramble";
@@ -26,6 +27,15 @@ const NFSNavItemWithScramble = React.memo(function NFSNavItemWithScramble({ opt,
   else if (rel === -1) posClass = "menu-3d-left";
   else if (rel === 1) posClass = "menu-3d-right";
   else posClass = "menu-3d-far";
+
+  // Theme detection (light/dark)
+  const isDark = typeof window !== "undefined"
+    ? document.documentElement.classList.contains("dark")
+    : false;
+  const iconColor = idx === selected
+    ? (isDark ? "var(--color-text-main)":"var(--color-primary)")
+    : (isDark ? "var(--color-primary)" : "var(--color-text-main)");
+  const Icon = idx === selected ? opt.iconFilled : opt.iconOutline;
 
   return (
     <div
@@ -47,7 +57,7 @@ const NFSNavItemWithScramble = React.memo(function NFSNavItemWithScramble({ opt,
       onPointerEnter={useCallback(() => setHovered(true), [])}
       onPointerLeave={useCallback(() => setHovered(false), [])}
     >
-      {opt.icon}
+      <Icon size={32} color={iconColor} aria-hidden="true" />
       <span>{scrambled}</span>
       {idx === selected && <div className="reticle" />}
     </div>
@@ -154,7 +164,7 @@ export default function NFSNavbar() {
   }, [selected]);
 
   return (
-    <nav className="nfs-menu" style={{ border: "2px solid red", overflow:"hidden" }}>
+    <nav className="nfs-menu" style={{ borderBottom: "2px solid var(--color-text-subtle)", overflow:"hidden" }}>
       <div className="nfs-header">Midnight Torque</div>
       <audio ref={audioRef} src="/assets/audio/tick.mp3" preload="auto" />
       <div

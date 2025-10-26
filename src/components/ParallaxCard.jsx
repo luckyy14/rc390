@@ -152,7 +152,6 @@ export default function ParallaxCard({
         width: currentSize.width,
         height: currentSize.height,
         overflow: 'hidden',
-        cursor: 'pointer',
         touchAction: 'none',
         borderRadius: 24,
       }}

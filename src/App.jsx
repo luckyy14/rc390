@@ -14,7 +14,6 @@ import { ParallaxProvider } from 'react-scroll-parallax';
 import LenisProvider from "./layouts/LenisProvider";
 import ThreeDLayout from "./layouts/ThreeDLayout";
 import CanvasSelector from "./layouts/CanvasSelector";
-import AnimatedBorder from "./components/AnimatedBorder";
 
 const App = () => {
   return (
@@ -25,7 +24,6 @@ const App = () => {
             <CanvasSelector />
           </ParallaxProvider>
         }>
-          <AnimatedBorder />
           <NFSNavbar />
           <Routes>
             <Route path="/" element={<Home />} />

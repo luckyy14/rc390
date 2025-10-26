@@ -7,7 +7,7 @@
   font-size: var(--font-body);
   letter-spacing: 1px;
   text-transform: uppercase;
-  cursor: pointer;
+  /* cursor: pointer; */
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
   box-shadow: 0 2px 8px 0 #00000033;
   margin: var(--spacing-xs);

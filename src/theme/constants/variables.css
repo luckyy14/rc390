@@ -8,7 +8,9 @@
   --color-border: #333333;
   --color-muted: #555555;
   --color-text-main: #E0E0E0;
-  --color-text-subtle: #BBBBBB;
+  --color-text-subtle: #d82020;
+  
+  --color-warning: #FF3D00;
 
   /* Typography */
   --font-hero: 72px;

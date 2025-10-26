@@ -9,7 +9,7 @@
   text-align: center;
   filter: grayscale(100%);
   transition: filter 0.3s, transform 0.2s, color 0.2s, -webkit-text-stroke-color 0.2s, -webkit-text-stroke-width 0.2s;
-  cursor: pointer;
+  /* cursor: pointer; */
   outline: none;
   min-height: 90px;
   padding: 8px 0 4px 0;
@@ -31,12 +31,14 @@
 }
 
 .menu-option svg {
-  width: 48px;
-  height: 48px;
+  
+  width: 32px ;
+  height: 32px ;
   display: block;
   margin: 0 auto;
   filter: drop-shadow(0 2px 4px #000a);
 }
+
 
 .menu-option span {
   display: block;

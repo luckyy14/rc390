@@ -11,10 +11,13 @@
 }
 .nfs-header {
   font-family: 'UnifrakturCook', serif;
-  font-size: 2.2rem;
-  color: #fff;
+  font-size: 4rem;
+  color: var(--color-surface);
   letter-spacing: 2px;
   text-shadow: 2px 2px 0 #000, 0 0 8px #ff6600aa;
   margin-bottom: 18px;
   text-transform: lowercase;
+   animation: pulse 3s infinite alternate;
+  -webkit-text-stroke: 3px #000000;
 }
+

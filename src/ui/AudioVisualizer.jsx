@@ -263,7 +263,7 @@ export default function AudioVisualizer({
           height: buttonSize,
           background: "none",
           border: "none",
-          cursor: "pointer",
+          // cursor: "pointer",
           outline: "none",
           zIndex: 2,
           padding: 0,

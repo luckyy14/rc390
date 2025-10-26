@@ -1,4 +1,4 @@
-.border-top,
+/* .border-top,
 .border-bottom {
   position: fixed;
   left: 0;
@@ -54,4 +54,4 @@
 @keyframes borderRightIn {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
-}
+} */

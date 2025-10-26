@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from "react";
 
 export default function TireSkidTrail({ enabled = true }) {
-  if (!enabled) return null;
+
   const canvasRef = useRef(null);
   const skids = useRef([]);
   const lastPos = useRef({ x: null, y: null });
@@ -110,7 +110,7 @@ export default function TireSkidTrail({ enabled = true }) {
       if (styleTag && styleTag.parentNode) styleTag.parentNode.removeChild(styleTag);
     };
   }, []);
-
+  if (!enabled) return null;
   return (
     <canvas
       ref={canvasRef}
