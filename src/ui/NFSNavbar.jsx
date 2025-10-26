@@ -14,7 +14,7 @@ import { useTextScramble } from "../hooks/useTextScramble";
 
 const NFSNavItemWithScramble = React.memo(function NFSNavItemWithScramble({ opt, idx, selected, handleSelect, userInteracted, len }) {
   const [hovered, setHovered] = React.useState(false);
-  const scrambled = useTextScramble(opt.label, hovered);
+  const scrambled = useTextScramble(opt.label, hovered, idx === selected);
 
   // Compute relative position for 3D effect
   let rel = idx - selected;

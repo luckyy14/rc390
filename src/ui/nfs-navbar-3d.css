@@ -7,8 +7,7 @@
 .menu-3d-left {
   transform: rotateY(-20deg) translateX(-10%) translateZ(-10px) scale(0.95);
   z-index: 1;
-  opacity: 0.7;
-  filter: blur(0.5px) grayscale(60%);
+  opacity: 0.9;
   transition: transform 0.4s cubic-bezier(.4,2,.6,1), opacity 0.3s, filter 0.3s;
 }
 
@@ -23,8 +22,7 @@
 .menu-3d-right {
   transform: rotateY(20deg) translateX(10%) translateZ(-10px) scale(0.95);
   z-index: 1;
-  opacity: 0.7;
-  filter: blur(0.5px) grayscale(60%);
+  opacity: 0.9;
   transition: transform 0.4s cubic-bezier(.4,2,.6,1), opacity 0.3s, filter 0.3s;
 }
 
@@ -43,7 +41,7 @@
 .menu-3d-far {
   transform: scale(0.85);
   z-index: 1;
-  /* opacity: 0.75; */
-  filter: grayscale(80%) blur(0.5px);
+  opacity: 0.75;
+  filter: blur(0.5px) grayscale(60%);
   transition: transform 0.4s cubic-bezier(.4,2,.6,1), opacity 0.3s, filter 0.3s;
 }

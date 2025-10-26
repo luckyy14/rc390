@@ -6,12 +6,21 @@ function randomChar() {
   return CHARS[Math.floor(Math.random() * CHARS.length)];
 }
 
-export function useTextScramble(target, trigger, { speed = 50, stepDelay = 80 } = {}) {
+export function useTextScramble(target, trigger, revealNow = false, { speed = 50, stepDelay = 80 } = {}) {
   const [display, setDisplay] = useState(target);
   const rafRef = useRef();
   const timeoutRef = useRef();
 
   useEffect(() => {
+    let running = true;
+    // Always clean up previous animation/timers
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    clearTimeout(timeoutRef.current);
+
+    if (revealNow) {
+      setDisplay(target);
+      return;
+    }
     if (!trigger) {
       setDisplay(target);
       return;
@@ -19,7 +28,6 @@ export function useTextScramble(target, trigger, { speed = 50, stepDelay = 80 } 
     let revealed = 0;
     let current = Array.from(target).map(() => "");
     let scrambleCount = 0;
-    let running = true;
     const len = target.length;
 
     function revealNext() {
@@ -60,7 +68,7 @@ export function useTextScramble(target, trigger, { speed = 50, stepDelay = 80 } 
       clearTimeout(timeoutRef.current);
       setDisplay(target);
     };
-  }, [trigger, target, speed, stepDelay]);
+  }, [trigger, target, speed, stepDelay, revealNow]);
 
   return display;
-} 
+}
