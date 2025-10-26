@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useLenis } from '../layouts/LenisProvider';
 import { useSpring, to } from '@react-spring/web';
 import { Rc390Viewer } from '../3d/models/rc390';
+import { Canvas } from '@react-three/fiber';
 import { animated } from '@react-spring/web';
 
 /**
@@ -100,15 +101,8 @@ export default function ParallaxCard({
     });
   }, [mouse, api, currentSize]);
 
-  // (moved up)
-
-  // Calculate position interpolation for fullscreen transition
-  const [originRect, setOriginRect] = useState(null);
-
-
   // Interpolate position and size for zoom
   const [animatedStyle, setAnimatedStyle] = useState({backgroundColor:"red"});
-  let tiltStyle = {};
 
   useEffect(() => {
     // Animate zoom based on scrollProgress (0 to 1)
@@ -171,9 +165,10 @@ export default function ParallaxCard({
             const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
             const crx = clamp(x.get(), -15, 15);
             const cry = clamp(y.get(), -15, 15);
-            const rotX = -crx * Math.PI / 180 * 3;
-            const rotY = cry * Math.PI / 180 * 7;
-            // Render the 3D layer as a function inside Canvas context
+            // 3d bike rotation based on tilt
+            const rotX = -crx * Math.PI / 180 * 2.5;
+            const rotY = cry * Math.PI / 180 * 4.5;
+            // Render the 3D layer inside a Canvas context
             return (
               <div
                 key={`3d-${i}`}
@@ -186,7 +181,9 @@ export default function ParallaxCard({
                   justifyContent: 'center'
                 }}
               >
-                {layer.component({ camera: layer.camera, rotX, rotY })}
+                <Canvas camera={layer.a} style={{ width: '100%', height: '100%' }}>
+                  {React.createElement(layer.component, { rotX, rotY })}
+                </Canvas>
               </div>
             );
           })}
@@ -194,9 +191,9 @@ export default function ParallaxCard({
           {layers.filter(layer => layer.type !== '3d').map((layer, i) => {
             // Ensure image is always large enough to cover card during parallax
             // Use a larger multiplier to guarantee no edge exposure
-            const imgScale = 2.6;
-            const imgWidth = Math.min(width * imgScale, window.innerWidth);
-            const imgHeight = Math.min(height * imgScale, window.innerHeight);
+            // const imgScale = 2.6;
+            // const imgWidth = Math.min(width * imgScale, window.innerWidth);
+            // const imgHeight = Math.min(height * imgScale, window.innerHeight);
             
             return (
               <animated.img

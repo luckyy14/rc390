@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Rajdhani:wght@400;700&family=Inter:wght@400;700&display=swap');/* Hide scrollbars for all pages */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Rajdhani:wght@400;700&family=Inter:wght@400;700&display=swap');
+@import "./theme/shadcn.css";
+@import "./theme/constants/variables.css";
+@import "./theme/bike-theme.css";
+
 html, body {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
@@ -6,10 +10,6 @@ html, body {
 html::-webkit-scrollbar, body::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
-
-@import "../src/theme/constants/variables.css";
-@import "../src/theme/shadcn.css";
-@import "../src/theme/bike-theme.css";
 
 @tailwind base;
 @tailwind components;

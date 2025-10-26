@@ -14,7 +14,7 @@ import { useTextScramble } from "../hooks/useTextScramble";
 
 const NFSNavItemWithScramble = React.memo(function NFSNavItemWithScramble({ opt, idx, selected, handleSelect, userInteracted, getTransform }) {
   const [hovered, setHovered] = React.useState(false);
-  const scrambled = useTextScramble(opt.label, hovered);
+  const scrambleRef = useTextScramble(opt.label, hovered);
   return (
     <div
       className={`menu-option menu-3d-item${idx === selected ? " selected" : ""}`}
@@ -37,7 +37,7 @@ const NFSNavItemWithScramble = React.memo(function NFSNavItemWithScramble({ opt,
       onPointerLeave={useCallback(() => setHovered(false), [])}
     >
       {opt.icon}
-      <span>{scrambled}</span>
+      <span ref={scrambleRef}>{opt.label}</span>
       {idx === selected && <div className="reticle" />}
     </div>
   );

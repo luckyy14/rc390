@@ -1,66 +1,48 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 
-const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+gsap.registerPlugin(ScrambleTextPlugin);
 
-function randomChar() {
-  return CHARS[Math.floor(Math.random() * CHARS.length)];
-}
+/**
+ * useTextScramble hook using GSAP ScrambleTextPlugin.
+ *
+ * Usage:
+ *   const scrambleRef = useTextScramble("NEW TEXT", trigger, { speed: 0.3 });
+ *   return <span ref={scrambleRef}>NEW TEXT</span>;
+ *
+ * @param {string} target - The text to scramble to.
+ * @param {boolean} trigger - When true, triggers the scramble animation.
+ * @param {object} options - { speed, chars, revealDelay, newClass, duration }
+ * @returns {object} ref - Attach to the DOM element whose text should be scrambled.
+ */
+export function useTextScramble(target, trigger, options = {}) {
+  const {
+    speed = 0.3,
+    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+    revealDelay = 0,
+    newClass,
+    duration = 1,
+  } = options;
 
-export function useTextScramble(target, trigger, { speed = 50, stepDelay = 80 } = {}) {
-  const [display, setDisplay] = useState(target);
-  const rafRef = useRef();
-  const timeoutRef = useRef();
+  const ref = useRef(null);
 
   useEffect(() => {
-    if (!trigger) {
-      setDisplay(target);
+    if (!trigger || !ref.current) {
+      if (ref.current) ref.current.textContent = target;
       return;
     }
-    let revealed = 0;
-    let current = Array.from(target).map(() => "");
-    let scrambleCount = 0;
-    let running = true;
-    const len = target.length;
+    gsap.to(ref.current, {
+      duration,
+      scrambleText: {
+        text: target,
+        chars,
+        revealDelay,
+        speed,
+        newClass,
+      },
+    });
+  }, [trigger, target, speed, chars, revealDelay, newClass, duration]);
 
-    function revealNext() {
-      if (!running) return;
-      if (revealed >= len) {
-        setDisplay(target);
-        return;
-      }
-      scrambleCount = 0;
-      function scrambleFrame() {
-        if (!running) return;
-        scrambleCount++;
-        for (let i = revealed; i < len; i++) {
-          // Skip scrambling every 2nd letter except first and last
-          if (i !== 0 && i !== len - 1 && i % 2 === 1) {
-            current[i] = target[i];
-          } else {
-            current[i] = randomChar();
-          }
-        }
-        const scrambled = current.join("");
-        setDisplay(prev => (prev !== scrambled ? scrambled : prev));
-        if (scrambleCount > 4) {
-          current[revealed] = target[revealed];
-          setDisplay(current.join(""));
-          revealed++;
-          timeoutRef.current = setTimeout(revealNext, stepDelay);
-        } else {
-          rafRef.current = requestAnimationFrame(scrambleFrame);
-        }
-      }
-      scrambleFrame();
-    }
-    revealNext();
-    return () => {
-      running = false;
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      clearTimeout(timeoutRef.current);
-      setDisplay(target);
-    };
-  }, [trigger, target, speed, stepDelay]);
-
-  return display;
-} 
+  return ref;
+}

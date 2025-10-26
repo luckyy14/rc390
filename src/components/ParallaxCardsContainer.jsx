@@ -11,14 +11,10 @@ import { OrbitControls } from '@react-three/drei';
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 
-function Rc390WithControls({ camera, rotX = 0, rotY = 0 }) {
-  // This function returns a JSX element to be called inside Canvas context
+export function Rc390WithControls({ camera, rotX = 0, rotY = 0 }) {
+  // This function returns r3f primitives to be rendered inside a parent <Canvas>
   return (
-    <Canvas camera={camera} style={{ width: '100%', height: '100%' }}>
-      <TiltedGroup rotX={rotX} rotY={rotY} />
-      {/* OrbitControls disabled for parallax card */}
-      {/* <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} /> */}
-    </Canvas>
+    <TiltedGroup rotX={rotX} rotY={rotY} />
   );
 }
 

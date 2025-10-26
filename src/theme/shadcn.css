@@ -16,9 +16,19 @@
 
 /* Example component overrides */
 .shadcn-btn {
-  @apply px-4 py-2 rounded-[var(--shadcn-border-radius)] bg-[var(--shadcn-primary)] text-white shadow-[var(--shadcn-shadow)] hover:bg-orange-700 transition;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  @apply rounded-[var(--shadcn-border-radius)] bg-[var(--shadcn-primary)] shadow-[var(--shadcn-shadow)] transition;
+  color: #fff;
+}
+.shadcn-btn:hover {
+  background-color: #c2410c; /* Tailwind's orange-700 */
 }
 
 .shadcn-card {
-  @apply bg-[var(--shadcn-surface)] text-white rounded-[var(--shadcn-border-radius)] shadow-[var(--shadcn-shadow)] p-6;
+  @apply bg-[var(--shadcn-surface)] rounded-[var(--shadcn-border-radius)] shadow-[var(--shadcn-shadow)];
+  padding: 1.5rem;
+  color: #fff;
 }
