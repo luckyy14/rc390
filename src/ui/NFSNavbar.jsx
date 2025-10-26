@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { gsap } from "gsap";
 import "./nfs-navbar.css";
 
 // Unified nav items
@@ -67,7 +68,13 @@ const NFSNavItemWithScramble = React.memo(function NFSNavItemWithScramble({ opt,
 export default function NFSNavbar() {
   const [selected, setSelected] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHome = location.pathname === "/";
   const len = nfsnavitems.length;
+
+  // Animation refs
+  const headerRef = useRef(null);
+  const menuRef = useRef(null);
 
   // Inertia scroll state
   const dragging = useRef(false);
@@ -159,27 +166,65 @@ export default function NFSNavbar() {
   // No getTransform: use classNames for 3D effect
 
   React.useEffect(() => {
+    if (!headerRef.current || !menuRef.current) return;
+    if (isHome) {
+      gsap.to(headerRef.current, {
+        scale: 1.08,
+        marginTop: "2.5rem",
+        position: "relative",
+        top: "0",
+        duration: 0.8,
+        ease: "power2.inOut"
+      });
+      gsap.to(menuRef.current, {
+        marginTop: "2.5rem",
+        duration: 0.8,
+        ease: "power2.inOut"
+      });
+    } else {
+      gsap.to(headerRef.current, {
+        x: "0%",
+        y: 0,
+        scale: 0.92,
+        marginLeft: 0,
+        left: "2.2rem",
+        position: "absolute",
+        duration: 0.8,
+        ease: "power2.inOut",
+        animation: "none",
+        margin: "1rem"
+      });
+      gsap.to(menuRef.current, {
+        marginTop: "1.2rem",
+        duration: 0.8,
+        width: "unset",
+        ease: "power2.inOut"
+      });
+    }
+  }, [isHome]);
+
+  React.useEffect(() => {
     // Debug: log when navbar renders
     // console.log("NFSNavbar rendered, selected:", selected);
   }, [selected]);
 
   return (
-    <nav className="nfs-menu" style={{ borderBottom: "2px solid var(--color-text-subtle)", overflow:"hidden" }}>
-      <div className="nfs-header">Midnight Torque</div>
+    <nav className="nfs-menu" style={{ borderBottom: "2px solid var(--color-text-subtle)", overflow: "hidden" }}>
+      <div
+        ref={headerRef}
+        className={`nfs-header${isHome ? " pulse" : ""}`}
+        style={{
+          zIndex: 10,
+          position: isHome ? "relative" : "absolute",
+          marginTop: "2.5rem"
+        }}
+      >
+        Midnight Torque
+      </div>
       <audio ref={audioRef} src="/assets/audio/tick.mp3" preload="auto" />
       <div
-        className="nfs-menu-options nfs-menu-3d"
-        style={{
-          touchAction: "pan-y",
-          display: "flex",
-          justifyContent: "center",
-          transition: "transform 0.5s cubic-bezier(.4,2,.6,1)",
-          ...(window.innerWidth < 800
-            ? { transform: `translateX(calc(50vw - ${(selected + 0.5) * 88}px))` }
-            : { transform: "none" })
-        }}
         ref={el => {
-          // Attach wheel event with passive: false to guarantee preventDefault works
+          menuRef.current = el;
           if (el) {
             el._wheelHandler && el.removeEventListener("wheel", el._wheelHandler);
             el._wheelHandler = function(e) {
@@ -196,6 +241,18 @@ export default function NFSNavbar() {
             };
             el.addEventListener("wheel", el._wheelHandler, { passive: false });
           }
+        }}
+        className="nfs-menu-options nfs-menu-3d"
+        style={{
+          touchAction: "pan-y",
+          display: "flex",
+          width: "100%",
+          marginTop: isHome ? "2.5rem" : "0.5rem",
+          justifyContent: isHome ? "center" : "flex-start",
+          transition: "transform 0.5s cubic-bezier(.4,2,.6,1)",
+          ...(window.innerWidth < 800
+            ? { transform: `translateX(calc(50vw - ${(selected + 0.5) * 88}px))` }
+            : { transform: "none" }),
         }}
         onPointerDown={e => {
           userInteracted.current = true;
