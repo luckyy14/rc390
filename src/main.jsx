@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+// import "./index.css";
+// import "./test.css";
 import "./index.css";
 import { ThemeProvider } from "./layouts/ThemeProvider";
 import { ErrorBoundary } from "./layouts/ErrorBoundary";

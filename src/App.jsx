@@ -6,6 +6,8 @@ import Display from "./pages/Display";
 import Exhaust from "./pages/Exhaust";
 import Garage from "./pages/Garage";
 import Manual from "./pages/Manual";
+import Showroom from "./pages/Showroom";
+import References from "./pages/References";
 import { Navbar } from "./ui/Navbar";
 import TireSkidTrail from "./ui/TireSkidTrail";
 /* import HamburgerMenu from "./ui/HamburgerMenu"; */
@@ -24,7 +26,6 @@ const App = () => {
             <CanvasSelector />
           </ParallaxProvider>
         }>
-          <NFSNavbar />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/shop" element={<Shop />} />
@@ -32,6 +33,8 @@ const App = () => {
             <Route path="/exhaust" element={<Exhaust />} />
             <Route path="/garage" element={<Garage />} />
             <Route path="/manual" element={<Manual />} />
+            <Route path="/showroom" element={<Showroom />} />
+            <Route path="/references" element={<References />} />
           </Routes>
         </ThreeDLayout>
       </LenisProvider>

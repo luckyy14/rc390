@@ -28,7 +28,8 @@
     "react-router-dom": "^7.6.3",
     "react-scroll-parallax": "^3.4.5",
     "shadcn-ui": "^0.9.5",
-    "three": "^0.177.0"
+    "three": "^0.177.0",
+    "three-stdlib": "^2.36.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",

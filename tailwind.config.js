@@ -16,10 +16,18 @@ export default {
         muted: '#555555',
         'text-main': '#E0E0E0',
         'text-subtle': '#BBBBBB',
+        'garage-orange': '#ff6a00',
+        'garage-yellow': '#ffea00',
+        'background-dark': '#050505',
+        'garage-gray': '#1a1a1a',
+        "primary": "#ff6a00",
+        "accent-yellow": "#ffea00",
       },
       fontFamily: {
         heading: ['Oswald', 'Rajdhani', 'Inter', 'sans-serif'],
         body: ['Inter', 'Rajdhani', 'sans-serif'],
+        "mono": ["JetBrains Mono", "monospace"],
+        "display": ["Space Grotesk", "sans-serif"]
       },
       fontSize: {
         hero: '72px',

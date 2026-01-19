@@ -39,17 +39,34 @@ function TiltedGroup({ rotX = 0, rotY = 0 }) {
   );
 }
 
+// Custom filters for "warm and petrol" look
+// Sky: Warm orange/gold shift
+// Mountain: Darker, cooler petrol/asphalt shift with contrast
 const cards = [
   {
     title: '',
     layers: [
       { type: '3d', component: Rc390WithControls, speed: 0, zIndex: -2, centerYOffset: 150, a: { position: [0, 0, 8], fov: 50 } },
-      { src: mountain1, speed: -1, zIndex: -3, centerYOffset: -100 },
-      { src: sky1, speed: -3, zIndex: -4, centerYOffset: -150, opacity: 0.3 },
+      { 
+        src: mountain1, 
+        speed: -1, 
+        zIndex: -3, 
+        centerYOffset: -100,
+        filter: 'sepia(0.5) hue-rotate(180deg) brightness(0.6) contrast(1.4)' // Petrol/Dark Asphalt look
+      },
+      { 
+        src: sky1, 
+        speed: -3, 
+        zIndex: -4, 
+        centerYOffset: -150, 
+        opacity: 0.6,
+        filter: 'sepia(1) hue-rotate(-30deg) saturate(2) brightness(0.8)' // Warm Golden/Petrol sky
+      },
     ],
-    zoomOnScroll: true,
+    zoomOnScroll: false, // Disable default full-screen zoom since it's an embedded component now
   }]
-export default function ParallaxCardsContainer() {
+
+export default function ParallaxCardsContainer({ className, style }) {
   const containerRef = React.useRef(null);
 
   // Wheel event logic removed; Lenis handles scroll
@@ -58,16 +75,15 @@ export default function ParallaxCardsContainer() {
     <ParallaxProvider>
       <div
         ref={containerRef}
-        className="flex flex-row justify-center items-center gap-8 py-16"
+        className={`flex flex-row justify-center items-center gap-8 ${className || ''}`}
         style={{
-          position: 'fixed',
-          left: '50%',
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
+          position: 'relative', // Changed from fixed
+          width: '100%',        // Changed from 100vw
+          height: '100%',
           perspective: '1000px',
-          width: '100vw',
-          pointerEvents: 'auto', // allow scroll and mouse events
-          cursor: 'none', // hide cursor over cards
+          pointerEvents: 'auto',
+          cursor: 'default',
+          ...style
         }}
       >
         {cards.map((card, i) => (
@@ -76,8 +92,16 @@ export default function ParallaxCardsContainer() {
             layers={card.layers}
             title={card.title}
             zoomOnScroll={card.zoomOnScroll}
-            width={450}
-            height={300}
+            width={450}  // Base width, but CSS will control container
+            height={300} // Base height
+            style={{
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
+            }}
           />
         ))}
       </div>

@@ -1,30 +1,276 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Rajdhani:wght@400;700&family=Inter:wght@400;700&display=swap');
-@import "./theme/shadcn.css";
-@import "./theme/constants/variables.css";
-@import "./theme/bike-theme.css";
+@import "tailwindcss";
 
-html, body {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-}
-html::-webkit-scrollbar, body::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+@theme {
+  /* Colors */
+  --color-primary: #ff6a00;
+  --color-surface: #121212;
+  --color-accent: #FF6F00;
+  --color-accent-hover: #FF8C1A;
+  --color-white: #FFFFFF;
+  --color-border: #333333;
+  --color-muted: #555555;
+  --color-text-main: #E0E0E0;
+  --color-text-subtle: #BBBBBB;
+  --color-garage-orange: #ff6a00;
+  --color-garage-yellow: #ffea00;
+  --color-background-dark: #050505;
+  --color-garage-gray: #1a1a1a;
+  --color-accent-yellow: #ffea00;
+
+  /* Landing Page Colors */
+  --color-primary-new: #FF6B00;
+  --color-asphalt: #0A0A0B;
+  --color-xerox-gray: #1A1A1A;
+
+  /* Fonts */
+  --font-heading: "Oswald", "Rajdhani", "Inter", sans-serif;
+  --font-body: "Inter", "Rajdhani", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-bebas: "Bebas Neue", sans-serif;
+  --font-landing-mono: "Space Grotesk", monospace;
+  /* As requested in landing HTML */
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 48px;
+
+  /* Radius */
+  --radius-lg: 16px;
+  --radius-sm: 6px;
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* --- VARIABLES FOR LEGACY/SHADCN SUPPORT --- */
+:root {
+  --shadcn-primary: #ff6a00;
+  --shadcn-surface: #18181b;
+  --shadcn-accent: #ffea00;
+  --shadcn-border-radius: 0.75rem;
+  --shadcn-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+
+  --button-hover-opacity: 0.15;
+  --navbar-hover-opacity: 0.10;
+
+  --glsl-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* --- CUSTOM COMPONENT STYLES --- */
+
+.shadcn-btn {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  @apply rounded-[var(--shadcn-border-radius)] bg-[var(--shadcn-primary)] shadow-[var(--shadcn-shadow)] transition;
+  color: #fff;
+}
+
+.shadcn-btn:hover {
+  background-color: #c2410c;
+}
+
+.shadcn-card {
+  @apply bg-[var(--shadcn-surface)] rounded-[var(--shadcn-border-radius)] shadow-[var(--shadcn-shadow)];
+  padding: 1.5rem;
+  color: #fff;
+}
+
+/* Navbar improvements */
+.navbar {
+  padding: var(--spacing-lg) var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
+  border-radius: var(--radius-lg);
+}
+
+.navbar a,
+.navbar .nav-link {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  margin: 0 var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s, color 0.2s;
+}
+
+.navbar a:hover,
+.navbar .nav-link:hover {
+  background: rgba(255, 111, 0, 0.10);
+  color: var(--color-accent);
+}
+
+/* --- BASE STYLES --- */
+html,
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
 
 body {
-  font-family: 'Inter', 'Rajdhani', sans-serif;
-  background: var(--color-primary);
-  color: var(--color-text-main);
+  font-family: var(--font-mono);
+  @apply bg-background-dark text-white overflow-hidden select-none;
   cursor: url('/assets/wheel.png') 16 16, auto !important;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Oswald', 'Rajdhani', 'Inter', sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
   color: var(--color-white);
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+/* --- GRITTY GARAGE HUD STYLES --- */
+.gritty-panel {
+  background: linear-gradient(135deg, #151515 0%, #0a0a0a 100%);
+  border: 1px solid #333;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.gritty-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBTlkwh4_eWE1CRLmBpjei3PNcalqVhvr_EUPRc-YqeF_IknmLFNgBdPqmJpX48PH6i_MITSV15M6vZ_E-ELZayYrh18XeUJSE-prlqqCIF4W6_alWo4Iia8j6UhFb1Tef5o70T38mrUtH394YTexiDMubvDOxvaA_wd1ffwJxSBTASahzXfGlZuUIS7WyzhlARioXEhsMTvg3JFBeYeYBohldCeoevnxY_v7nsvOhdj9j1r6mapazAaxUIPSFhdswGlIrQuh9F9HC0);
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.industrial-glow {
+  background: radial-gradient(circle at center, rgba(255, 106, 0, 0.15) 0%, transparent 70%);
+}
+
+.spotlight {
+  background: conic-gradient(from 180deg at 50% 0%, transparent 160deg, rgba(255, 255, 255, 0.05) 180deg, transparent 200deg);
+  filter: blur(20px);
+}
+
+.glitch-hover:hover {
+  color: var(--color-garage-yellow);
+  text-shadow: 2px 0 #f00, -2px 0 #00ffbc;
+  transform: translate(-2px, -1px);
+}
+
+.hard-edge {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
+}
+
+.scanline {
+  width: 100%;
+  height: 100px;
+  z-index: 5;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 106, 0, 0.05) 50%, rgba(0, 0, 0, 0) 100%);
+  opacity: 0.1;
+  position: absolute;
+  bottom: 100%;
+  animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+  0% {
+    bottom: 100%;
+  }
+
+  100% {
+    bottom: -100px;
+  }
+}
+
+.hotspot-glitch {
+  transition: all 0.1s steps(2);
+}
+
+.hotspot-glitch:hover {
+  background-color: var(--color-garage-yellow) !important;
+  transform: scale(1.1) translate(2px, -1px);
+  box-shadow: 0 0 15px var(--color-garage-yellow);
+}
+
+/* --- LANDING PAGE STYLES --- */
+.nfs-slant {
+  clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
+}
+
+.nfs-slant-reverse {
+  clip-path: polygon(5% 0, 100% 0, 100% 100%, 0% 100%);
+}
+
+.xerox-noise {
+  position: relative;
+}
+
+.xerox-noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--glsl-noise);
+  opacity: 0.12;
+  mix-blend-mode: hard-light;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.micro-shake {
+  animation: shake 0.2s infinite;
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(0, 0) rotate(0);
+  }
+
+  25% {
+    transform: translate(1px, -1px) rotate(0.1deg);
+  }
+
+  50% {
+    transform: translate(-1px, 1px) rotate(-0.1deg);
+  }
+
+  75% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
+}
+
+.snap-transition {
+  transition: all 0.15s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+/* Landing page scanline (top to bottom direction) */
+.scanline-vertical {
+  width: 100%;
+  height: 100px;
+  z-index: 20;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 107, 0, 0.05) 50%, rgba(0, 0, 0, 0) 100%);
+  position: absolute;
+  animation: scanline-vertical 8s linear infinite;
+}
+
+@keyframes scanline-vertical {
+  0% {
+    top: -100px;
+  }
+
+  100% {
+    top: 100%;
+  }
+}
+
+.tall-text {
+  letter-spacing: -0.02em;
+  line-height: 0.85;
 }

@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import ParallaxCardsContainer, { Rc390WithControls } from "../components/ParallaxCardsContainer";
 import { Rc390Viewer } from "../3d/models/rc390";
+import Showroom from "../pages/Showroom";
 
 // Map routes to 3D/visual background components
 import { Canvas } from "@react-three/fiber";
@@ -24,7 +25,8 @@ const canvasMap = {
   //     <OrbitControls />
   //     <Rc390Viewer />
   //   </Canvas>
-  // ),
+  // ), 
+  // "/showroom": <Showroom />,
   // Add more routes and backgrounds as needed
 };
 

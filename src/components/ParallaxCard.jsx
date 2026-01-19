@@ -20,7 +20,7 @@ export default function ParallaxCard({
   layers = [],
   title = '',
   zoomOnScroll = false,
-  onZoomed = () => {},
+  onZoomed = () => { },
   width = 160,
   height = 120,
   style = {},
@@ -102,7 +102,7 @@ export default function ParallaxCard({
   }, [mouse, api, currentSize]);
 
   // Interpolate position and size for zoom
-  const [animatedStyle, setAnimatedStyle] = useState({backgroundColor:"red"});
+  const [animatedStyle, setAnimatedStyle] = useState({ backgroundColor: "red" });
 
   useEffect(() => {
     // Animate zoom based on scrollProgress (0 to 1)
@@ -193,7 +193,7 @@ export default function ParallaxCard({
             // const imgScale = 2.6;
             // const imgWidth = Math.min(width * imgScale, window.innerWidth);
             // const imgHeight = Math.min(height * imgScale, window.innerHeight);
-            
+
             return (
               <animated.img
                 key={i}
@@ -218,7 +218,7 @@ export default function ParallaxCard({
                   zIndex: (layer.zIndex || i + 2),
                   opacity: layer.opacity || 1,
                   pointerEvents: 'none',
-                  filter: 'none',
+                  filter: layer.filter || 'none',
                   boxShadow: 'none',
                   mixBlendMode: 'normal',
                   borderRadius: 24,
