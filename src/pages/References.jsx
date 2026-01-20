@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import PetrolLogo from '../components/3d/PetrolLogo';
+import PetrolLogo from '../components/3d/petrol-logo/PetrolLogo';
 
 const References = () => {
 
@@ -141,16 +141,16 @@ const References = () => {
                                 <directionalLight position={[10, 10, 5]} intensity={1} color="#ffffff" />
                                 <directionalLight position={[-10, -5, -5]} intensity={0.5} color="#ff6600" />
                                 <PetrolLogo text={currentShape.text} />
-                                <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
+                                <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
                             </Canvas>
                             <div className="absolute inset-0 bg-primary/20 blur-[80px] rounded-full -z-10 animate-[pulse-slow_4s_cubic-bezier(0.4,0,0.6,1)_infinite]"></div>
                         </div>
 
-                        <div className="mt-12 text-center max-w-lg z-10">
-                            <h1 className="text-3xl md:text-5xl font-black italic tracking-tighter uppercase mb-2">
-                                FUEL <span className="text-primary">MORPH</span> 01
-                            </h1>
-                        </div>
+                    </div>
+                    <div className="ml-12 max-w-lg z-10">
+                        <h1 className="text-3xl md:text-5xl font-black italic tracking-tighter uppercase mb-2">
+                            FUEL <span className="text-primary">MORPH</span> 01
+                        </h1>
                     </div>
 
                     {/* Footer */}
@@ -166,7 +166,7 @@ const References = () => {
                                 <div className="w-px h-full bg-white/10"></div>
                             </div>
                             <div className="flex items-center space-x-12 text-white/40">
-                                <a className="hover:text-white transition-colors" href="#">LinkedIn</a>
+                                <a className="hover:text-white transition-colors" target="_blank" href="https://www.linkedin.com/in/lakshay-baheti/" rel="noopener noreferrer">LinkedIn</a>
                                 <div className="relative px-6 py-2">
                                     <span key={currentShape.label} className="text-white font-bold tracking-[0.3em] scramble animate-pulse">
                                         {currentShape.label}
@@ -176,7 +176,7 @@ const References = () => {
                                     <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary"></div>
                                     <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary"></div>
                                 </div>
-                                <a className="hover:text-white transition-colors" href="#">Medium</a>
+                                <a className="hover:text-white transition-colors" target="_blank" href="https://codex.lakshaybaheti.com/" rel="noopener noreferrer">Learn</a>
                             </div>
                         </div>
 
