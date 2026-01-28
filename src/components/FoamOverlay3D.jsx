@@ -1,51 +1,49 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
+import { usePhysicsWorker } from "../hooks/usePhysicsWorker";
 
 export function FoamOverlay3D({ modelUrl = "/assets/ktm.glb", scale = 1, position = [0, 0, 0], wipeRadius, hidden, setHidden, ragMode }) {
   const { scene: originalScene } = useGLTF(modelUrl);
   const [scene] = useState(() => originalScene.clone(true));
+  const { calculateHiding } = usePhysicsWorker();
 
   // Overlay all meshes in the scene
-  const overlayMat = new THREE.MeshBasicMaterial({
+  const overlayMat = useMemo(() => new THREE.MeshBasicMaterial({
     color: "#fff",
     transparent: true,
     opacity: 0.7,
     depthWrite: false,
-  });
+  }), []);
 
   // Collect all meshes for easier access in pointer handler
-  const meshList = [];
-  scene.traverse((child) => {
-    if (child.isMesh) meshList.push(child);
-  });
+  const meshList = useMemo(() => {
+    const list = [];
+    scene.traverse((child) => {
+      if (child.isMesh) list.push(child);
+    });
+    return list;
+  }, [scene]);
 
-  // Handler: hide all meshes if any vertex is within radius of pointer (rag mode)
+  // Handler: delegate to worker
   const handlePointerDown = useCallback(
-    (e) => {
+    async (e) => {
       if (!ragMode) return;
+
       const pointer = e.point;
-      const toHide = {};
-      meshList.forEach((mesh) => {
-        if (hidden[mesh.uuid]) return;
-        const pos = mesh.geometry.attributes.position;
-        for (let i = 0; i < pos.count; i++) {
-          const vertex = new THREE.Vector3(
-            pos.getX(i),
-            pos.getY(i),
-            pos.getZ(i)
-          );
-          mesh.localToWorld(vertex);
-          if (pointer.distanceTo(vertex) < wipeRadius) {
-            toHide[mesh.uuid] = true;
-            break;
-          }
-        }
-      });
-      if (Object.keys(toHide).length > 0) setHidden((prev) => ({ ...prev, ...toHide }));
+      const visibleMeshes = meshList.filter(mesh => !hidden[mesh.uuid]);
+
+      if (visibleMeshes.length === 0) return;
+
+      const toHide = await calculateHiding(visibleMeshes, pointer, wipeRadius);
+
+      if (Object.keys(toHide).length > 0) {
+        setHidden((prev) => ({ ...prev, ...toHide }));
+      }
     },
-    [wipeRadius, setHidden, hidden, meshList, ragMode]
+    [wipeRadius, setHidden, hidden, meshList, ragMode, calculateHiding]
   );
+
 
   const overlays = [];
   meshList.forEach((child) => {
