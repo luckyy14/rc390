@@ -26,6 +26,10 @@ const Garage = () => {
     ]);
   };
 
+  const handleLayerClean = (key) => {
+    setFoamLayers((layers) => layers.filter((l) => l.key !== key));
+  };
+
   const handleWipeFoam = () => {
     setFoamLayers([]);
   };
@@ -49,13 +53,16 @@ const Garage = () => {
                 <directionalLight position={[2, 5, 2]} intensity={1.2} />
                 <FumeOverlay position={[0, 0, -2]} scale={[15, 10, 1]} />
                 <Rc390 scale={2} position={[0, -0.6, 0]} />
-                {foamLayers.map((layer) => (
+                {foamLayers.map((layer, index) => (
                   <FoamOverlay3D
                     key={layer.key}
                     scale={layer.scale}
                     position={[0, -0.6, 0]}
                     wipeRadius={wipeRadius}
                     ragMode={ragMode}
+                    thickness={0.03 + index * 0.01}
+                    noiseScale={10 + index * 2}
+                    onClean={() => handleLayerClean(layer.key)}
                   />
                 ))}
                 <OrbitControls enabled={!ragMode} enableZoom />

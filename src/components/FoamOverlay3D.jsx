@@ -3,18 +3,38 @@ import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { usePhysicsWorker } from "../hooks/usePhysicsWorker";
 
-export function FoamOverlay3D({ modelUrl = "/assets/ktm.glb", scale = 1, position = [0, 0, 0], wipeRadius, ragMode }) {
+export function FoamOverlay3D({ modelUrl = "/assets/ktm.glb", scale = 1, position = [0, 0, 0], wipeRadius, ragMode, thickness = 0.05, noiseScale = 5.0, onClean }) {
   const { scene: originalScene } = useGLTF(modelUrl);
   const [scene] = useState(() => originalScene.clone(true));
   const { calculateHiding } = usePhysicsWorker();
   const [localHidden, setLocalHidden] = useState({}); // { meshName: Set(indices) }
 
+  // Track total vertices and hidden vertices to detect "clean" state
+  const totalVertices = useMemo(() => {
+    let count = 0;
+    scene.traverse((child) => {
+      if (child.isMesh) count += child.geometry.attributes.position.count;
+    });
+    return count;
+  }, [scene]);
+
+  const hiddenCount = useMemo(() => {
+    return Object.values(localHidden).reduce((sum, set) => sum + set.size, 0);
+  }, [localHidden]);
+
+  React.useEffect(() => {
+    if (totalVertices > 0 && (hiddenCount / totalVertices) > 0.85) {
+      onClean?.();
+    }
+  }, [hiddenCount, totalVertices, onClean]);
+
   // Overlay all meshes in the scene
   const overlayMat = useMemo(() => new THREE.MeshBasicMaterial({
-    color: "#fff",
+    color: "#ffffff",
     transparent: true,
-    opacity: 0.7,
+    opacity: 0.8,
     depthWrite: false,
+    side: THREE.DoubleSide,
   }), []);
 
   // Collect all meshes and initialize visibility attributes
@@ -24,24 +44,59 @@ export function FoamOverlay3D({ modelUrl = "/assets/ktm.glb", scale = 1, positio
       if (child.isMesh) {
         // Clone material for this foam layer
         const mat = overlayMat.clone();
-        // Modify shader to support vertex visibility
+
+        // Custom uniforms for shader
+        mat.userData.uThickness = { value: thickness };
+        mat.userData.uNoiseScale = { value: noiseScale };
+
+        // Modify shader to support vertex visibility, thickness, and noise
         mat.onBeforeCompile = (shader) => {
+          shader.uniforms.uThickness = mat.userData.uThickness;
+          shader.uniforms.uNoiseScale = mat.userData.uNoiseScale;
+
           shader.vertexShader = `
             attribute float vVisible;
             varying float vVis;
+            uniform float uThickness;
+            uniform float uNoiseScale;
+
+            // Simple noise function
+            float hash(float n) { return fract(sin(n) * 43758.5453123); }
+            float noise(vec3 x) {
+                vec3 p = floor(x);
+                vec3 f = fract(x);
+                f = f*f*(3.0-2.0*f);
+                float n = p.x + p.y*57.0 + 113.0*p.z;
+                return mix(mix(mix( hash(n+  0.0), hash(n+  1.0),f.x),
+                               mix( hash(n+ 57.0), hash(n+ 58.0),f.x),f.y),
+                           mix(mix( hash(n+113.0), hash(n+114.0),f.x),
+                               mix( hash(n+170.0), hash(n+171.0),f.x),f.y),f.z);
+            }
+
             ${shader.vertexShader}
           `.replace(
             '#include <begin_vertex>',
-            `#include <begin_vertex>
-             vVis = vVisible;`
+            `
+             #include <begin_vertex>
+             vVis = vVisible;
+
+             // Displace vertex along normal with noise
+             float n = noise(position * uNoiseScale);
+             transformed += normal * uThickness * (0.5 + 0.5 * n);
+            `
           );
+
           shader.fragmentShader = `
             varying float vVis;
             ${shader.fragmentShader}
           `.replace(
             '#include <dithering_fragment>',
-            `#include <dithering_fragment>
-             if (vVis < 0.5) discard;`
+            `
+             #include <dithering_fragment>
+             if (vVis < 0.5) discard;
+             // Simple opacity for testing
+             gl_FragColor.a *= 0.9;
+            `
           );
         };
         child.material = mat;
