@@ -14,7 +14,8 @@ self.onmessage = function (e) {
     const pz = pointer.z;
 
     meshes.forEach((mesh) => {
-        const { uuid, positions, worldMatrix } = mesh;
+        const { name, positions, worldMatrix } = mesh;
+        const hitIndices = [];
 
         // Check if any vertex is within wipeRadius
         // optimized to avoid object creation in inner loop
@@ -35,9 +36,12 @@ self.onmessage = function (e) {
             const distSq = dx * dx + dy * dy + dz * dz;
 
             if (distSq < wipeRadius * wipeRadius) {
-                toHide[uuid] = true;
-                break;
+                hitIndices.push(i / 3);
             }
+        }
+
+        if (hitIndices.length > 0) {
+            toHide[name] = new Int32Array(hitIndices);
         }
     });
 

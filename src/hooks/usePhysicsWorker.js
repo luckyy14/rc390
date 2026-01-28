@@ -32,7 +32,7 @@ export function usePhysicsWorker() {
 
             // Prepare serializable data
             const serializableMeshes = meshes.map(mesh => ({
-                uuid: mesh.uuid,
+                name: mesh.name,
                 positions: mesh.geometry.attributes.position.array,
                 worldMatrix: mesh.matrixWorld.elements
             }));

@@ -5,24 +5,29 @@ import R3FBase from "../3d/r3fBase";
 import { OrbitControls } from "@react-three/drei";
 import PageLayout from "../layouts/PageLayout";
 import { FoamOverlay3D } from "../components/FoamOverlay3D";
+import { FumeOverlay } from "../components/3d/fumes/FumeOverlay";
 import { FaHandSparkles, FaSoap, FaBroom } from "react-icons/fa";
 
 const Garage = () => {
   const [foamLayers, setFoamLayers] = useState([]);
   const [wipeRadius, setWipeRadius] = useState(0.25);
   const [ragMode, setRagMode] = useState(false);
-  const [hidden, setHidden] = useState({}); // shared across all overlays
 
   const handleFoamIt = () => {
+    if (foamLayers.length >= 8) {
+      const audio = new Audio("/assets/audio/tick.mp3");
+      audio.volume = 0.5;
+      audio.play();
+      return;
+    }
     setFoamLayers((layers) => [
       ...layers,
-      { key: Date.now(), scale: 2 + layers.length * 0.01 }
+      { key: `${Date.now()}-${layers.length}`, scale: 2 + layers.length * 0.015 } // offset scales more for visibility
     ]);
   };
 
   const handleWipeFoam = () => {
     setFoamLayers([]);
-    setHidden({});
   };
 
   return (
@@ -37,11 +42,12 @@ const Garage = () => {
         </Helmet>
         <h1 className="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-6 mt-2 tracking-widest uppercase font-heading">Garage</h1>
         <div className="flex flex-row flex-wrap mweb-flex-col w-full h-auto">
-          <div className="flex-1 flex items-center justify-center min-w-[320px] min-h-[320px] md:min-w-[480px] md:min-h-[480px]" style={{height:'60vh'}}>
-            <div className="w-full h-full">
+          <div className="flex-1 flex items-center justify-center min-w-[320px] min-h-[320px] md:min-w-[480px] md:min-h-[480px]" style={{ height: '60vh' }}>
+            <div className="w-full h-full border border-[var(--color-border)] rounded-lg overflow-hidden relative">
               <R3FBase camera={{ position: [2, 2, 5], fov: 50 }}>
                 <ambientLight intensity={0.5} />
                 <directionalLight position={[2, 5, 2]} intensity={1.2} />
+                <FumeOverlay position={[0, 0, -2]} scale={[15, 10, 1]} />
                 <Rc390 scale={2} position={[0, -0.6, 0]} />
                 {foamLayers.map((layer) => (
                   <FoamOverlay3D
@@ -49,12 +55,10 @@ const Garage = () => {
                     scale={layer.scale}
                     position={[0, -0.6, 0]}
                     wipeRadius={wipeRadius}
-                    hidden={hidden}
-                    setHidden={setHidden}
                     ragMode={ragMode}
                   />
                 ))}
-                <OrbitControls enablePan={!ragMode} enableZoom enableRotate={!ragMode} />
+                <OrbitControls enabled={!ragMode} enableZoom />
               </R3FBase>
             </div>
           </div>
